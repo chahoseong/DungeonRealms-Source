@@ -1,8 +1,9 @@
 ﻿#include "Character/DungeonRealmsPlayerCharacter.h"
+#include "Character/DungeonRealmsCharacterMovementComponent.h"
 #include "InputActionValue.h"
 
 ADungeonRealmsPlayerCharacter::ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UDungeonRealmsCharacterMovementComponent>(CharacterMovementComponentName))
 {
 }
 
@@ -14,9 +15,7 @@ void ADungeonRealmsPlayerCharacter::BeginPlay()
 
 void ADungeonRealmsPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
-	AController* OwningController = GetController();
-
-	if (IsValid(OwningController))
+	if (const AController* OwningController = GetController(); IsValid(OwningController))
 	{
 		const FVector2D MovementInput = InputActionValue.Get<FVector2D>();
 		const FRotator TargetRotation(0.0f, OwningController->GetControlRotation().Yaw, 0.0f);
