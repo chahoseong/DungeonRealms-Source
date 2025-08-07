@@ -12,7 +12,9 @@ public class DungeonRealms : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"GameplayTags"
+			"GameplayTags",
+			"GameplayAbilities",
+			"GameplayTasks",
 		]);
 		
 		PublicIncludePaths.AddRange([
