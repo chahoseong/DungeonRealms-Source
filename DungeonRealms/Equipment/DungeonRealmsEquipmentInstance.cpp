@@ -1,5 +1,5 @@
 ﻿#include "Equipment/DungeonRealmsEquipmentInstance.h"
-#include "Equipment/Features/DungeonRealmsEquipmentFeature.h"
+#include "Equipment/Actions/DungeonRealmsEquipmentAction.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -79,7 +79,7 @@ bool UDungeonRealmsEquipmentInstance::IsLocallyControlled() const
 
 void UDungeonRealmsEquipmentInstance::OnEquipped()
 {
-	for (UDungeonRealmsEquipmentFeature* Feature : EquipmentFeatures)
+	for (UDungeonRealmsEquipmentAction* Feature : EquipmentActions)
 	{
 		Feature->OnEquipped(this);
 	}
@@ -89,7 +89,7 @@ void UDungeonRealmsEquipmentInstance::OnEquipped()
 void UDungeonRealmsEquipmentInstance::OnUnequipped()
 {
 	K2_OnUnequipped();
-	for (UDungeonRealmsEquipmentFeature* Feature : EquipmentFeatures)
+	for (UDungeonRealmsEquipmentAction* Feature : EquipmentActions)
 	{
 		Feature->OnUnequipped(this);
 	}

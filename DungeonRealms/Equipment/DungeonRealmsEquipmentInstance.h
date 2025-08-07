@@ -4,7 +4,7 @@
 #include "DungeonRealmsEquipmentDefinition.h"
 #include "DungeonRealmsEquipmentInstance.generated.h"
 
-class UDungeonRealmsEquipmentFeature;
+class UDungeonRealmsEquipmentAction;
 struct FGameplayAbilitySpecHandle;
 
 UCLASS(Blueprintable, BlueprintType)
@@ -46,7 +46,7 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
-	TArray<TObjectPtr<UDungeonRealmsEquipmentFeature>> EquipmentFeatures;
+	TArray<TObjectPtr<UDungeonRealmsEquipmentAction>> EquipmentActions;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition;

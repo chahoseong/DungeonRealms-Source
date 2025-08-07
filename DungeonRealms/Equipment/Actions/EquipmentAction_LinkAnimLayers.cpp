@@ -1,8 +1,8 @@
-﻿#include "Equipment/Features/EquipmentFeature_LinkAnimLayers.h"
+﻿#include "Equipment/Actions/EquipmentAction_LinkAnimLayers.h"
 #include "Equipment/DungeonRealmsEquipmentInstance.h"
 #include "GameFramework/Character.h"
 
-void UEquipmentFeature_LinkAnimLayers::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_LinkAnimLayers::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (!EquipmentInstance->IsLocallyControlled())
 	{
@@ -17,7 +17,7 @@ void UEquipmentFeature_LinkAnimLayers::OnEquipped(UDungeonRealmsEquipmentInstanc
 	}
 }
 
-void UEquipmentFeature_LinkAnimLayers::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_LinkAnimLayers::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (!EquipmentInstance->IsLocallyControlled())
 	{

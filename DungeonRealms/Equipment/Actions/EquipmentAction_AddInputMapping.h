@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "DungeonRealmsEquipmentFeature.h"
-#include "EquipmentFeature_AddInputMapping.generated.h"
+#include "DungeonRealmsEquipmentAction.h"
+#include "EquipmentAction_AddInputMapping.generated.h"
 
 class UInputMappingContext;
 
@@ -18,7 +18,7 @@ struct FInputMappingContextToApply
 };
 
 UCLASS(DisplayName="Add InputMapping")
-class DUNGEONREALMS_API UEquipmentFeature_AddInputMapping : public UDungeonRealmsEquipmentFeature
+class DUNGEONREALMS_API UEquipmentAction_AddInputMapping : public UDungeonRealmsEquipmentAction
 {
 	GENERATED_BODY()
 

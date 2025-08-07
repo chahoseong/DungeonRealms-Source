@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "DungeonRealmsEquipmentFeature.h"
-#include "EquipmentFeature_AttachToSocket.generated.h"
+#include "DungeonRealmsEquipmentAction.h"
+#include "EquipmentAction_AttachToSocket.generated.h"
 
 USTRUCT()
 struct FDungeonRealmsEquipmentActorToSpawn
@@ -20,7 +20,7 @@ struct FDungeonRealmsEquipmentActorToSpawn
 };
 
 UCLASS(DisplayName="AttachToSocket")
-class DUNGEONREALMS_API UEquipmentFeature_AttachToSocket : public UDungeonRealmsEquipmentFeature
+class DUNGEONREALMS_API UEquipmentAction_AttachToSocket : public UDungeonRealmsEquipmentAction
 {
 	GENERATED_BODY()
 

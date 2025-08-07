@@ -2,12 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "DungeonRealmsEquipmentFeature.generated.h"
+#include "DungeonRealmsEquipmentAction.generated.h"
 
 class UDungeonRealmsEquipmentInstance;
 
 UCLASS(Abstract, DefaultToInstanced, EditInlineNew)
-class DUNGEONREALMS_API UDungeonRealmsEquipmentFeature : public UObject
+class DUNGEONREALMS_API UDungeonRealmsEquipmentAction : public UObject
 {
 	GENERATED_BODY()
 

@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "DungeonRealmsEquipmentFeature.h"
-#include "EquipmentFeature_LinkAnimLayers.generated.h"
+#include "DungeonRealmsEquipmentAction.h"
+#include "EquipmentAction_LinkAnimLayers.generated.h"
 
 UCLASS(DisplayName="Link AnimLayer")
-class DUNGEONREALMS_API UEquipmentFeature_LinkAnimLayers : public UDungeonRealmsEquipmentFeature
+class DUNGEONREALMS_API UEquipmentAction_LinkAnimLayers : public UDungeonRealmsEquipmentAction
 {
 	GENERATED_BODY()
 

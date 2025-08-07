@@ -1,8 +1,8 @@
-﻿#include "Equipment/Features/EquipmentFeature_AttachToSocket.h"
+﻿#include "Equipment/Actions/EquipmentAction_AttachToSocket.h"
 #include "Equipment/DungeonRealmsEquipmentInstance.h"
 #include "GameFramework/Character.h"
 
-void UEquipmentFeature_AttachToSocket::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_AttachToSocket::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (!EquipmentInstance->HasAuthority())
 	{
@@ -36,7 +36,7 @@ void UEquipmentFeature_AttachToSocket::OnEquipped(UDungeonRealmsEquipmentInstanc
 	}
 }
 
-void UEquipmentFeature_AttachToSocket::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_AttachToSocket::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (EquipmentInstance->HasAuthority())
 	{

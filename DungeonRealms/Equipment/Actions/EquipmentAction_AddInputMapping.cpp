@@ -1,8 +1,8 @@
-﻿#include "Equipment/Features/EquipmentFeature_AddInputMapping.h"
+﻿#include "Equipment/Actions/EquipmentAction_AddInputMapping.h"
 #include "Equipment/DungeonRealmsEquipmentInstance.h"
 #include "EnhancedInputSubsystems.h"
 
-void UEquipmentFeature_AddInputMapping::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_AddInputMapping::OnEquipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (!EquipmentInstance->IsLocallyControlled())
 	{
@@ -32,7 +32,7 @@ void UEquipmentFeature_AddInputMapping::OnEquipped(UDungeonRealmsEquipmentInstan
 	}
 }
 
-void UEquipmentFeature_AddInputMapping::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UEquipmentAction_AddInputMapping::OnUnequipped(UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	if (!EquipmentInstance->IsLocallyControlled())
 	{
