@@ -16,6 +16,8 @@ class DUNGEONREALMS_API ADungeonRealmsPlayerController : public APlayerControlle
 public:
 	ADungeonRealmsPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
@@ -23,6 +25,10 @@ protected:
 private:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
+
+	void Input_AbilityInputPressed(FGameplayTag InputTag);
+	void Input_AbilityInputHeld(FGameplayTag InputTag);
+	void Input_AbilityInputReleased(FGameplayTag InputTag);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")

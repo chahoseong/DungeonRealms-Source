@@ -1,10 +1,39 @@
 ﻿#include "Character/DungeonRealmsPlayerCharacter.h"
 #include "Character/DungeonRealmsCharacterMovementComponent.h"
+#include "AbilitySystemComponent.h"
+#include "Equipment/DungeonRealmsEquipmentManagerComponent.h"
 #include "InputActionValue.h"
+#include "Player/DungeonRealmsPlayerState.h"
 
 ADungeonRealmsPlayerCharacter::ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UDungeonRealmsCharacterMovementComponent>(CharacterMovementComponentName))
 {
+	EquipmentManagerComponent = CreateDefaultSubobject<UDungeonRealmsEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
+}
+
+void ADungeonRealmsPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	InitializeAbilitySystem();
+	InitializeAbilitySets();
+}
+
+void ADungeonRealmsPlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	InitializeAbilitySystem();
+}
+
+void ADungeonRealmsPlayerCharacter::InitializeAbilitySystem()
+{
+	ADungeonRealmsPlayerState* DungeonRealmsPlayerState = GetPlayerStateChecked<ADungeonRealmsPlayerState>();
+
+	AbilitySystemComponent = DungeonRealmsPlayerState->GetAbilitySystemComponent();
+	AbilitySystemComponent->InitAbilityActorInfo(DungeonRealmsPlayerState, this);
+
+	AttributeSet = DungeonRealmsPlayerState->GetAttributeSet();
 }
 
 void ADungeonRealmsPlayerCharacter::BeginPlay()

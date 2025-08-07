@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Net/Serialization/FastArraySerializer.h"
+#include "DungeonRealmsEquipmentList.generated.h"
 
 class UDungeonRealmsEquipmentDefinition;
 class UDungeonRealmsEquipmentInstance;
