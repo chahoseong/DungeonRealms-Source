@@ -17,6 +17,11 @@ void ADungeonRealmsPlayerCharacter::PossessedBy(AController* NewController)
 	
 	InitializeAbilitySystem();
 	InitializeAbilitySets();
+
+	for (TSubclassOf Equipment : StartupEquipments)
+	{
+		EquipmentManagerComponent->Equip(Equipment);
+	}
 }
 
 void ADungeonRealmsPlayerCharacter::OnRep_PlayerState()

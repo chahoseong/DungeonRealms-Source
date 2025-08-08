@@ -8,7 +8,6 @@ ADungeonRealmsCharacter::ADungeonRealmsCharacter(const FObjectInitializer& Objec
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-
 }
 
 void ADungeonRealmsCharacter::InitializeAbilitySets()
@@ -23,8 +22,11 @@ void ADungeonRealmsCharacter::InitializeAbilitySets()
 		}
 		else
 		{
-			FDungeonRealmsAbilitySetHandles Handles = AbilitySet.Get()->GiveToAbilitySystem(AbilitySystemComponent, this);
-			AbilitySetPathToHandles.Add(AbilitySet.ToSoftObjectPath(), Handles);
+			AbilitySet.Get()->GiveToAbilitySystem(
+				AbilitySystemComponent,
+				this,
+				GrantedHandles
+			);
 		}
 	}
 

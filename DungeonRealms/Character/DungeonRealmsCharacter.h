@@ -46,5 +46,5 @@ protected:
 	TArray<TSoftObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 
 private:
-	TMap<FSoftObjectPath, FDungeonRealmsAbilitySetHandles> AbilitySetPathToHandles;
+	FDungeonRealmsAbilitySetGrantedHandles GrantedHandles;
 };

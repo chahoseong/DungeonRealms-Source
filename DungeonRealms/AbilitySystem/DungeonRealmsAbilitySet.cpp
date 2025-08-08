@@ -2,7 +2,7 @@
 #include "AbilitySystemComponent.h"
 #include "DungeonRealmsLogChannels.h"
 
-void FDungeonRealmsAbilitySetHandles::AddGameplayAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
+void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
 {
 	if (Handle.IsValid())
 	{
@@ -10,7 +10,7 @@ void FDungeonRealmsAbilitySetHandles::AddGameplayAbilitySpecHandle(const FGamepl
 	}
 }
 
-void FDungeonRealmsAbilitySetHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
+void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
 {
 	if (Handle.IsValid())
 	{
@@ -18,11 +18,11 @@ void FDungeonRealmsAbilitySetHandles::AddGameplayEffectHandle(const FActiveGamep
 	}
 }
 
-void FDungeonRealmsAbilitySetHandles::TakeFromAbilitySystem(UAbilitySystemComponent* AbilitySystem)
+void FDungeonRealmsAbilitySetGrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem)
 {
-	check(AbilitySystem);
+	check(TargetAbilitySystem);
 
-	if (!AbilitySystem->IsOwnerActorAuthoritative())
+	if (!TargetAbilitySystem->IsOwnerActorAuthoritative())
 	{
 		return;
 	}
@@ -32,7 +32,7 @@ void FDungeonRealmsAbilitySetHandles::TakeFromAbilitySystem(UAbilitySystemCompon
 	{
 		if (Handle.IsValid())
 		{
-			AbilitySystem->ClearAbility(Handle);
+			TargetAbilitySystem->ClearAbility(Handle);
 		}
 	}
 	GameplayAbilitySpecHandles.Reset();
@@ -42,7 +42,7 @@ void FDungeonRealmsAbilitySetHandles::TakeFromAbilitySystem(UAbilitySystemCompon
 	{
 		if (Handle.IsValid())
 		{
-			AbilitySystem->RemoveActiveGameplayEffect(Handle);
+			TargetAbilitySystem->RemoveActiveGameplayEffect(Handle);
 		}
 	}
 	GameplayEffectHandles.Reset();
@@ -53,16 +53,22 @@ UDungeonRealmsAbilitySet::UDungeonRealmsAbilitySet(const FObjectInitializer& Obj
 {
 }
 
-FDungeonRealmsAbilitySetHandles UDungeonRealmsAbilitySet::GiveToAbilitySystem(
-	UAbilitySystemComponent* AbilitySystem, UObject* SourceObject) const
+void UDungeonRealmsAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem,
+	FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const
 {
-	check(AbilitySystem);
+	GiveToAbilitySystem(TargetAbilitySystem, nullptr, OutHandles);
+}
 
-	FDungeonRealmsAbilitySetHandles Handles;
-
-	if (!AbilitySystem->IsOwnerActorAuthoritative())
+void UDungeonRealmsAbilitySet::GiveToAbilitySystem(
+	UAbilitySystemComponent* TargetAbilitySystem,
+	UObject* SourceObject,
+	FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const
+{
+	check(TargetAbilitySystem);
+	
+	if (!TargetAbilitySystem->IsOwnerActorAuthoritative())
 	{
-		return Handles;
+		return;
 	}
 
 	// Grant the gameplay abilities.
@@ -78,8 +84,8 @@ FDungeonRealmsAbilitySetHandles UDungeonRealmsAbilitySet::GiveToAbilitySystem(
 		FGameplayAbilitySpec AbilitySpec(AbilityDefault, AbilityToGrant.Level);
 		AbilitySpec.SourceObject = SourceObject;
 		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityToGrant.InputTag);
-		const FGameplayAbilitySpecHandle Handle = AbilitySystem->GiveAbility(AbilitySpec);
-		Handles.AddGameplayAbilitySpecHandle(Handle);
+		const FGameplayAbilitySpecHandle Handle = TargetAbilitySystem->GiveAbility(AbilitySpec);
+		OutHandles.AddGameplayAbilitySpecHandle(Handle);
 	}
 
 	// Apply the gameplay effects.
@@ -92,9 +98,7 @@ FDungeonRealmsAbilitySetHandles UDungeonRealmsAbilitySet::GiveToAbilitySystem(
 			continue;
 		}
 		const UGameplayEffect* EffectDefault = EffectToApply.Effect->GetDefaultObject<UGameplayEffect>();
-		const FActiveGameplayEffectHandle Handle = AbilitySystem->ApplyGameplayEffectToSelf(EffectDefault, EffectToApply.Level, AbilitySystem->MakeEffectContext());
-		Handles.AddGameplayEffectHandle(Handle);
+		const FActiveGameplayEffectHandle Handle = TargetAbilitySystem->ApplyGameplayEffectToSelf(EffectDefault, EffectToApply.Level, TargetAbilitySystem->MakeEffectContext());
+		OutHandles.AddGameplayEffectHandle(Handle);
 	}
-
-	return Handles;
 }

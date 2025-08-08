@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "UObject/Object.h"
-#include "DungeonRealmsEquipmentDefinition.h"
+#include "Equipment/DungeonRealmsEquipmentDefinition.h"
+#include "AbilitySystem/DungeonRealmsAbilitySet.h"
 #include "DungeonRealmsEquipmentInstance.generated.h"
 
 class UDungeonRealmsEquipmentAction;
@@ -25,12 +26,9 @@ public:
 	
 	void AddEquipmentActor(AActor* EquipmentActor);
 	void DestroyEquipmentActors();
-
-	void AddGrantedAbilitySpecHandle(const FGameplayAbilitySpecHandle& SpecHandle);
-	void ClearGrantedAbilities();
 	
-
 	APawn* GetPawn() const;
+	
 	bool HasAuthority() const;
 	bool IsLocallyControlled() const;
 
@@ -50,10 +48,8 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition;
-	
+
+private:
 	UPROPERTY(Transient, Replicated)
 	TArray<TObjectPtr<AActor>> SpawnedActors;
-
-	UPROPERTY(Transient)
-	TArray<FGameplayAbilitySpecHandle> GrantedAbilitySpecHandles;
 };

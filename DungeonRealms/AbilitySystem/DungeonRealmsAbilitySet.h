@@ -40,7 +40,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FDungeonRealmsAbilitySetHandles
+struct FDungeonRealmsAbilitySetGrantedHandles
 {
 	GENERATED_BODY()
 
@@ -48,7 +48,9 @@ public:
 	void AddGameplayAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 
-	void TakeFromAbilitySystem(UAbilitySystemComponent* AbilitySystem);
+	void TakeFromAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem);
+
+	int32 Num() const { return GameplayAbilitySpecHandles.Num() + GameplayEffectHandles.Num(); }
 
 protected:
 	UPROPERTY()
@@ -66,7 +68,12 @@ class DUNGEONREALMS_API UDungeonRealmsAbilitySet : public UDataAsset
 public:
 	UDungeonRealmsAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	FDungeonRealmsAbilitySetHandles GiveToAbilitySystem(UAbilitySystemComponent* AbilitySystem, UObject* SourceObject = nullptr) const;
+	void GiveToAbilitySystem(UAbilitySystemComponent* AbilitySystem,
+		FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const;
+	void GiveToAbilitySystem(UAbilitySystemComponent* AbilitySystem,
+		UObject* SourceObject,
+		FDungeonRealmsAbilitySetGrantedHandles& OutHandles
+	) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty=Ability))

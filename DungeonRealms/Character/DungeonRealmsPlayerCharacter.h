@@ -4,6 +4,7 @@
 #include "DungeonRealmsCharacter.h"
 #include "DungeonRealmsPlayerCharacter.generated.h"
 
+class UDungeonRealmsEquipmentDefinition;
 struct FInputActionValue;
 class UDungeonRealmsEquipmentManagerComponent;
 
@@ -32,4 +33,7 @@ protected:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsEquipmentManagerComponent> EquipmentManagerComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	TArray<TSubclassOf<UDungeonRealmsEquipmentDefinition>> StartupEquipments;
 };

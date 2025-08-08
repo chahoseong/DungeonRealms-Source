@@ -2,6 +2,7 @@
 #include "Equipment/Actions/DungeonRealmsEquipmentAction.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/DungeonRealmsAbilitySet.h"
 #include "Net/UnrealNetwork.h"
 
 UDungeonRealmsEquipmentInstance::UDungeonRealmsEquipmentInstance(const FObjectInitializer& ObjectInitializer)
@@ -38,26 +39,6 @@ void UDungeonRealmsEquipmentInstance::DestroyEquipmentActors()
 		Actor->Destroy();
 	}
 	SpawnedActors.Reset();
-}
-
-void UDungeonRealmsEquipmentInstance::AddGrantedAbilitySpecHandle(const FGameplayAbilitySpecHandle& SpecHandle)
-{
-	GrantedAbilitySpecHandles.Add(SpecHandle);
-}
-
-void UDungeonRealmsEquipmentInstance::ClearGrantedAbilities()
-{
-	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
-	if (!IsValid(AbilitySystemComponent))
-	{
-		return;
-	}
-
-	for (const FGameplayAbilitySpecHandle& Handle : GrantedAbilitySpecHandles)
-	{
-		AbilitySystemComponent->ClearAbility(Handle);
-	}
-	GrantedAbilitySpecHandles.Reset();
 }
 
 APawn* UDungeonRealmsEquipmentInstance::GetPawn() const

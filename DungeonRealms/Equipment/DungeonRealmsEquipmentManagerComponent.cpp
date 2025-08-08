@@ -53,7 +53,7 @@ UDungeonRealmsEquipmentInstance* UDungeonRealmsEquipmentManagerComponent::GetEqu
 	for (const FDungeonRealmsAppliedEquipmentEntry& Entry : EquipmentList.Entries)
 	{
 		const UDungeonRealmsEquipmentDefinition* EquipmentDefault = GetDefault<UDungeonRealmsEquipmentDefinition>(Entry.EquipmentInstance->GetEquipmentDefinition());
-		if (SlotTag == EquipmentDefault->SlotTag)
+		if (EquipmentDefault->SlotTags.HasTagExact(SlotTag))
 		{
 			return Entry.EquipmentInstance;
 		}
