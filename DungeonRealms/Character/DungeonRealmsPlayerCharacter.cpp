@@ -3,12 +3,14 @@
 #include "AbilitySystemComponent.h"
 #include "Equipment/DungeonRealmsEquipmentManagerComponent.h"
 #include "InputActionValue.h"
+#include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
 #include "Player/DungeonRealmsPlayerState.h"
 
 ADungeonRealmsPlayerCharacter::ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UDungeonRealmsCharacterMovementComponent>(CharacterMovementComponentName))
 {
 	EquipmentManagerComponent = CreateDefaultSubobject<UDungeonRealmsEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
+	CombatSystemComponent = CreateDefaultSubobject<UDungeonRealmsCombatSystemComponent>(TEXT("CombatSystemComponent"));
 }
 
 void ADungeonRealmsPlayerCharacter::PossessedBy(AController* NewController)
@@ -45,6 +47,11 @@ void ADungeonRealmsPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+UDungeonRealmsCombatSystemComponent* ADungeonRealmsPlayerCharacter::GetCombatSystemComponent() const
+{
+	return CombatSystemComponent;
 }
 
 void ADungeonRealmsPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)

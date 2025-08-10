@@ -1,0 +1,3 @@
+#pragma once
+
+#define DungeonRealms_TraceChannel_Obstacle ECC_GameTraceChannel1

@@ -53,3 +53,15 @@ UAttributeSet* ADungeonRealmsCharacter::GetAttributeSet() const
 {
 	return AttributeSet;
 }
+
+AActor* ADungeonRealmsCharacter::GetAttachedActorFromSocket(FName SocketName) const
+{
+	for (const USceneComponent* ChildComponent : GetMesh()->GetAttachChildren())
+	{
+		if (ChildComponent->GetAttachSocketName() == SocketName)
+		{
+			return ChildComponent->GetOwner();
+		}
+	}
+	return nullptr;
+}
