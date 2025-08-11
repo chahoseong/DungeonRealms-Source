@@ -5,6 +5,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "AbilitySystem/DungeonRealmsAbilitySet.h"
 #include "GameFramework/Character.h"
+#include "Team/DungeonRealmsTeam.h"
 #include "DungeonRealmsCharacter.generated.h"
 
 class UAttributeSet;
@@ -17,11 +18,17 @@ class DUNGEONREALMS_API ADungeonRealmsCharacter : public ACharacter, public IAbi
 public:
 	ADungeonRealmsCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	//~Begin IGenericTeamAgentInterface interface
-	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	//~Begin APawn interface
+	virtual void PossessedBy(AController* NewController) override;
+	//~End APawn interface
+	
+	//~Begin IDungeonRealmsTeamAgentInterface interface
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamId) override;
 	virtual FGenericTeamId GetGenericTeamId() const override;
-	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const;
-	//~End IGenericTeamAgentInterface interface
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+	//~End IDungeonRealmsTeamAgentInterface interface
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
@@ -54,6 +61,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Abilities")
 	TArray<TSoftObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Replicated)
+	EDungeonRealmsTeam MyTeam = EDungeonRealmsTeam::NoTeam;
+	
 private:
 	FDungeonRealmsAbilitySetGrantedHandles GrantedHandles;
 };

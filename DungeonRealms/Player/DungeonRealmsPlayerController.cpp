@@ -3,7 +3,9 @@
 #include "AbilitySystem/DungeonRealmsAbilitySystemComponent.h"
 #include "Character/DungeonRealmsPlayerCharacter.h"
 #include "DungeonRealmsGameplayTags.h"
+#include "DungeonRealmsLogChannels.h"
 #include "EnhancedInputSubsystems.h"
+#include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "Input/DungeonRealmsInputComponent.h"
 
 ADungeonRealmsPlayerController::ADungeonRealmsPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -107,7 +109,7 @@ void ADungeonRealmsPlayerController::PostProcessInput(const float DeltaTime, con
 
 void ADungeonRealmsPlayerController::SetGenericTeamId(const FGenericTeamId& NewTeamID)
 {
-	MyTeam = ToDungeonRealmsTeam(NewTeamID);
+	UE_LOG(LogDungeonRealms, Error, TEXT("You can't set the team id (%s); This controller's team id have to player."), *GetPathNameSafe(this));
 }
 
 FGenericTeamId ADungeonRealmsPlayerController::GetGenericTeamId() const
@@ -117,25 +119,5 @@ FGenericTeamId ADungeonRealmsPlayerController::GetGenericTeamId() const
 
 ETeamAttitude::Type ADungeonRealmsPlayerController::GetTeamAttitudeTowards(const AActor& Other) const
 {
-	if (const IGenericTeamAgentInterface* OtherTeamAgent = Cast<const IGenericTeamAgentInterface>(&Other))
-	{
-		FGenericTeamId MyGenericTeamId = GetGenericTeamId();
-		FGenericTeamId OtherGenericTeamId = OtherTeamAgent->GetGenericTeamId();
-		FGenericTeamId NoTeamId = ToGenericTeamId(EDungeonRealmsTeam::NoTeam);
-		
-		if (MyGenericTeamId != OtherGenericTeamId)
-		{
-			return MyGenericTeamId != NoTeamId && OtherGenericTeamId != NoTeamId
-					   ? ETeamAttitude::Hostile
-					   : ETeamAttitude::Neutral;
-		}
-		else
-		{
-			return MyGenericTeamId != NoTeamId && OtherGenericTeamId != NoTeamId
-					   ? ETeamAttitude::Friendly
-					   : ETeamAttitude::Neutral;
-		}
-	}
-
-	return ETeamAttitude::Neutral;
+	return UDungeonRealmsCombatStatics::GetTeamAttitudeTowards(GetPawn(), &Other);
 }

@@ -35,6 +35,7 @@ public:
 	bool IsGuarding() const;
 
 private:
+	TArray<FHitResult> FilterToHostileTargets(const TArray<FHitResult>& Hits) const;
 	void ApplyHitEvents(const TArray<FHitResult>& Hits) const;
 
 protected:

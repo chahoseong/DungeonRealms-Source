@@ -48,7 +48,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UDungeonRealmsInputConfig> InputConfig;
 
-	UPROPERTY(VisibleAnywhere, Category="Team")
+	UPROPERTY(VisibleInstanceOnly, Transient, Category="Team")
 	EDungeonRealmsTeam MyTeam = EDungeonRealmsTeam::Player;
 	
 private:

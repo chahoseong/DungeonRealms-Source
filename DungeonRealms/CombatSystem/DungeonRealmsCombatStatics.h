@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DungeonRealmsCombatStatics.generated.h"
 
@@ -10,5 +11,12 @@ class DUNGEONREALMS_API UDungeonRealmsCombatStatics : public UBlueprintFunctionL
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintPure, Category="Dungeon Realms|Combat")
 	static bool HasObstacleBetween(const AActor* SourceActor, const AActor* TargetActor);
+
+	UFUNCTION(BlueprintPure, Category="Dungeon Realms|Combat")
+	static bool HasHostileAttitude(const AActor* QueryActor, const AActor* TargetActor);
+
+	UFUNCTION(BlueprintPure, Category="Dungeon Realms|Combat")
+	static ETeamAttitude::Type GetTeamAttitudeTowards(const AActor* QueryActor, const AActor* TargetActor);
 };

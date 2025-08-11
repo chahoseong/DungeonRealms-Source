@@ -1,8 +1,11 @@
 #include "Character/DungeonRealmsCharacter.h"
 
 #include "DungeonRealmsCharacterMovementComponent.h"
+#include "DungeonRealmsLogChannels.h"
+#include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
+#include "Net/UnrealNetwork.h"
 #include "Team/DungeonRealmsTeam.h"
 
 ADungeonRealmsCharacter::ADungeonRealmsCharacter(const FObjectInitializer& ObjectInitializer)
@@ -10,32 +13,39 @@ ADungeonRealmsCharacter::ADungeonRealmsCharacter(const FObjectInitializer& Objec
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+	SetReplicates(true);
 }
 
-void ADungeonRealmsCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+void ADungeonRealmsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	if (IGenericTeamAgentInterface* GenericTeamAgent = Cast<IGenericTeamAgentInterface>(GetController()))
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, MyTeam);
+}
+
+void ADungeonRealmsCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (const IGenericTeamAgentInterface* TeamAgent = Cast<IGenericTeamAgentInterface>(NewController))
 	{
-		GenericTeamAgent->SetGenericTeamId(NewTeamID);
+		MyTeam = ToDungeonRealmsTeam(TeamAgent->GetGenericTeamId());
 	}
+}
+
+void ADungeonRealmsCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamId)
+{
+	UE_LOG(LogDungeonRealms, Error, TEXT("You can't set the team id on a possessed character (%s); it's driven by the associated controller"), *GetPathNameSafe(this));
 }
 
 FGenericTeamId ADungeonRealmsCharacter::GetGenericTeamId() const
 {
-	if (const IGenericTeamAgentInterface* GenericTeamAgent = Cast<const IGenericTeamAgentInterface>(GetController()))
-	{
-		return GenericTeamAgent->GetGenericTeamId();
-	}
-	return ToGenericTeamId(EDungeonRealmsTeam::NoTeam);
+	return ToGenericTeamId(MyTeam);
 }
 
 ETeamAttitude::Type ADungeonRealmsCharacter::GetTeamAttitudeTowards(const AActor& Other) const
 {
-	if (const IGenericTeamAgentInterface* GenericTeamAgent = Cast<const IGenericTeamAgentInterface>(GetController()))
-	{
-		return GenericTeamAgent->GetTeamAttitudeTowards(Other);
-	}
-	return ETeamAttitude::Neutral;
+	return UDungeonRealmsCombatStatics::GetTeamAttitudeTowards(this, &Other);
 }
 
 void ADungeonRealmsCharacter::InitializeAbilitySets()

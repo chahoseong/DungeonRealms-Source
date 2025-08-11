@@ -26,6 +26,4 @@ void ADungeonRealmsEnemyCharacter::BeginPlay()
 	{
 		DungeonRealmsAnimInstance->InitializeWithAbilitySystem(AbilitySystemComponent);
 	}
-
-	SetGenericTeamId(ToGenericTeamId(MyTeam));
 }

@@ -66,12 +66,23 @@ void UDungeonRealmsCombatSystemComponent::PerformAttackTrace()
 	{
 		return;
 	}
+	const TArray<FHitResult> Hits = ActiveAttackTracer->PerformTrace();
+	const TArray<FHitResult> HostileTargets = FilterToHostileTargets(Hits);
+	ApplyHitEvents(HostileTargets);
+}
 
-	TArray<FHitResult> Hits = ActiveAttackTracer->PerformTrace();
-
-	// TODO: 적대적인 액터만 골라내야 함.
-	
-	ApplyHitEvents(Hits);
+TArray<FHitResult> UDungeonRealmsCombatSystemComponent::FilterToHostileTargets(const TArray<FHitResult>& Hits) const
+{
+	TArray<FHitResult> HostileTargets;
+	for (const FHitResult Hit : Hits)
+	{
+		const AActor* HitActor = Hit.GetActor();
+		if (IsValid(HitActor) && UDungeonRealmsCombatStatics::HasHostileAttitude(GetOwner(),HitActor))
+		{
+			HostileTargets.Add(Hit);
+		}
+	}
+	return HostileTargets;
 }
 
 void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult>& Hits) const

@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "DungeonRealmsCharacter.h"
-#include "Team/DungeonRealmsTeam.h"
 #include "DungeonRealmsEnemyCharacter.generated.h"
 
 class UDungeonRealmsCombatSystemComponent;
@@ -21,7 +20,4 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsCombatSystemComponent> CombatSystemComponent;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Team")
-	EDungeonRealmsTeam MyTeam;
 };
