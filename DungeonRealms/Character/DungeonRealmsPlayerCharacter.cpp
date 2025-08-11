@@ -3,14 +3,17 @@
 #include "AbilitySystemComponent.h"
 #include "Equipment/DungeonRealmsEquipmentManagerComponent.h"
 #include "InputActionValue.h"
+#include "Animation/DungeonRealmsAnimInstance.h"
 #include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
+#include "CombatSystem/DungeonRealmsTargetLockComponent.h"
 #include "Player/DungeonRealmsPlayerState.h"
 
 ADungeonRealmsPlayerCharacter::ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer.SetDefaultSubobjectClass<UDungeonRealmsCharacterMovementComponent>(CharacterMovementComponentName))
+	: Super(ObjectInitializer)
 {
 	EquipmentManagerComponent = CreateDefaultSubobject<UDungeonRealmsEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 	CombatSystemComponent = CreateDefaultSubobject<UDungeonRealmsCombatSystemComponent>(TEXT("CombatSystemComponent"));
+	TargetLockComponent = CreateDefaultSubobject<UDungeonRealmsTargetLockComponent>(TEXT("TargetLockComponent"));
 }
 
 void ADungeonRealmsPlayerCharacter::PossessedBy(AController* NewController)
@@ -39,6 +42,11 @@ void ADungeonRealmsPlayerCharacter::InitializeAbilitySystem()
 
 	AbilitySystemComponent = DungeonRealmsPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(DungeonRealmsPlayerState, this);
+
+	if (UDungeonRealmsAnimInstance* DungeonRealmsAnimInstance = Cast<UDungeonRealmsAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		DungeonRealmsAnimInstance->InitializeWithAbilitySystem(AbilitySystemComponent);
+	}
 
 	AttributeSet = DungeonRealmsPlayerState->GetAttributeSet();
 }

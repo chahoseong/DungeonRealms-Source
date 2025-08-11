@@ -8,11 +8,17 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Equipment_Slot_OffHand, "Equipment.Slot.OffHand")
 
 	UE_DEFINE_GAMEPLAY_TAG(State_Guarding, "State.Guarding")
+	UE_DEFINE_GAMEPLAY_TAG(State_Rolling, "State.Rolling")
+	UE_DEFINE_GAMEPLAY_TAG(State_Dead, "State.Dead")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Move, "Input.Action.Move")
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Look, "Input.Action.Look")
+	UE_DEFINE_GAMEPLAY_TAG(Input_Action_SwitchTarget, "Input.Action.SwitchTarget")
 
 	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Hit, "Event.Attack.Hit")
+	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Left, "Event.SwitchTarget.Left")
+	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Right, "Event.SwitchTarget.Right")
+	
 	UE_DEFINE_GAMEPLAY_TAG(Event_Health_Damaged, "Event.Health.Damaged")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
 }

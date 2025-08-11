@@ -5,6 +5,7 @@
 #include "CombatSystem/DungeonRealmsCombatSystemInterface.h"
 #include "DungeonRealmsPlayerCharacter.generated.h"
 
+class UDungeonRealmsTargetLockComponent;
 class UDungeonRealmsCombatSystemComponent;
 class UDungeonRealmsEquipmentDefinition;
 struct FInputActionValue;
@@ -40,6 +41,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsCombatSystemComponent> CombatSystemComponent;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UDungeonRealmsTargetLockComponent> TargetLockComponent;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TArray<TSubclassOf<UDungeonRealmsEquipmentDefinition>> StartupEquipments;

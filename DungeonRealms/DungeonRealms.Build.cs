@@ -24,7 +24,8 @@ public class DungeonRealms : ModuleRules
 		PrivateDependencyModuleNames.AddRange([
 			"InputCore",
 			"EnhancedInput",
-			"NetCore"
+			"NetCore",
+			"AIModule"
 		]);
 
 		// Uncomment if you are using Slate UI
