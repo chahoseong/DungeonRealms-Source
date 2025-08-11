@@ -3,6 +3,7 @@
 #include "DungeonRealmsGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "GenericTeamAgentInterface.h"
+#include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -24,10 +25,7 @@ void UDungeonRealmsGameplayAbility_LockOn::ActivateAbility(const FGameplayAbilit
 		AddInputMapping();
 	}
 
-	if (HasAuthority(&CurrentActivationInfo))
-	{
-		TryLockOnTarget();
-	}
+	TryLockOnTarget();
 }
 
 void UDungeonRealmsGameplayAbility_LockOn::AddInputMapping() const
@@ -129,6 +127,7 @@ void UDungeonRealmsGameplayAbility_LockOn::HandleTargetSwitching(const FGameplay
 	if (!TargetLockComponent.IsValid())
 	{
 		CancelTargetLock();
+		return;
 	}
 	
 	AvailableActorsToLock = FindAvailableActorsToLock();
@@ -176,33 +175,29 @@ TArray<AActor*> UDungeonRealmsGameplayAbility_LockOn::FindAvailableActorsToLock(
 		ControlForward = FRotationMatrix(ControlRotation).TransformVector(FVector::ForwardVector);
 		ControlForward.Z = 0.0f;
 	}
+	
+	TArray<FHitResult> Hits;
+	UKismetSystemLibrary::BoxTraceMultiForObjects(
+		AvatarActor,
+		AvatarActor->GetActorLocation() + ControlForward * TraceBoxExtend.X,
+		AvatarActor->GetActorLocation() + ControlForward * TraceMaxDistance,
+		TraceBoxExtend,
+		FRotator(0.0f, ControlRotation.Yaw, 0.0f),
+		TraceQueryChannel,
+		false,
+		TArray<AActor*>(),
+		bShowTraceDebug ? EDrawDebugTrace::Persistent : EDrawDebugTrace::None,
+		Hits,
+		true
+	);
 
 	TArray<AActor*> HitActors;
-
-	if (const IGenericTeamAgentInterface* GenericTeamAgent = Cast<IGenericTeamAgentInterface>(Controller))
+	for (const FHitResult& Hit : Hits)
 	{
-		TArray<FHitResult> Hits;
-		UKismetSystemLibrary::BoxTraceMultiForObjects(
-			AvatarActor,
-			AvatarActor->GetActorLocation() + ControlForward * TraceBoxExtend.X,
-			AvatarActor->GetActorLocation() + ControlForward * TraceMaxDistance,
-			TraceBoxExtend,
-			FRotator(0.0f, ControlRotation.Yaw, 0.0f),
-			TraceQueryChannel,
-			false,
-			TArray<AActor*>(),
-			bShowTraceDebug ? EDrawDebugTrace::Persistent : EDrawDebugTrace::None,
-			Hits,
-			true
-		);
-
-		for (const FHitResult& Hit : Hits)
+		AActor* HitActor = Hit.GetActor();
+		if (UDungeonRealmsCombatStatics::HasHostileAttitude(AvatarActor, HitActor))
 		{
-			AActor* HitActor = Hit.GetActor();
-			if (GenericTeamAgent->GetTeamAttitudeTowards(*HitActor) == ETeamAttitude::Hostile)
-			{
-				HitActors.AddUnique(HitActor);
-			}
+			HitActors.AddUnique(HitActor);
 		}
 	}
 	
