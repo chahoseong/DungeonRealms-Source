@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include "ActiveGameplayEffectHandle.h"
 #include "Components/ActorComponent.h"
 #include "Equipment/DungeonRealmsEquipmentList.h"
 #include "DungeonRealmsEquipmentManagerComponent.generated.h"
 
+class UGameplayEffect;
+struct FDungeonRealmsEquipmentId;
 struct FGameplayTag;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -38,8 +41,17 @@ protected:
 private:
 	void OnEquipmentReplicatedAdd(UDungeonRealmsEquipmentInstance* EquipmentInstance);
 	void OnEquipmentReplicatedRemove(UDungeonRealmsEquipmentInstance* EquipmentInstance);
+
+	void ApplyEquipEffect(const UDungeonRealmsEquipmentInstance* EquipmentInstance);
+	void RemoveEquipEffect(const UDungeonRealmsEquipmentInstance* EquipmentInstance);
 	
 protected:
 	UPROPERTY(Replicated)
 	FDungeonRealmsEquipmentList EquipmentList;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> EquipEffectClass;
+
+private:
+	TMap<FDungeonRealmsEquipmentId, FActiveGameplayEffectHandle> ActiveEquipEffectHandles;
 };

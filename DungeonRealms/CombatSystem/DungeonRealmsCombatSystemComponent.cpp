@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "Abilities/GameplayAbilityTypes.h"
-#include "Character/DungeonRealmsCharacter.h"
+#include "Characters/DungeonRealmsCharacter.h"
 #include "DungeonRealmsLogChannels.h"
 
 UDungeonRealmsCombatSystemComponent* UDungeonRealmsCombatSystemComponent::FindCombatSystemComponent(const AActor* Actor)
@@ -89,9 +89,6 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 {
 	TArray<TWeakObjectPtr<AActor>> HitTargets;
 	
-	FGameplayEventData HitEventData;
-	HitEventData.Instigator = GetOwner();
-
 	for (const FHitResult& Hit : Hits)
 	{
 		AActor* HitActor = Hit.GetActor();
@@ -99,6 +96,8 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 			FindCombatSystemComponent(HitActor);
 		if (IsValid(TargetCombatSystem); TargetCombatSystem->IsGuarding())
 		{
+			FGameplayEventData HitEventData;
+			HitEventData.Instigator = GetOwner();
 			FGameplayAbilityTargetData_SingleTargetHit* HitTargetData = new FGameplayAbilityTargetData_SingleTargetHit(Hit);
 			HitEventData.TargetData = FGameplayAbilityTargetDataHandle(HitTargetData);
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
@@ -113,6 +112,8 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 
 	if (HitTargets.Num() > 0)
 	{
+		FGameplayEventData HitEventData;
+		HitEventData.Instigator = GetOwner();
 		FGameplayAbilityTargetData_ActorArray* HitTargetData = new FGameplayAbilityTargetData_ActorArray();
 		HitTargetData->SetActors(HitTargets);
 		HitEventData.TargetData = FGameplayAbilityTargetDataHandle(HitTargetData);
@@ -142,4 +143,22 @@ bool UDungeonRealmsCombatSystemComponent::CanDefendAgainst(const AActor* Attacke
 	ToAttacker.Z = 0.0f;
 	float DotResult = OwningActor->GetActorForwardVector().Dot(ToAttacker.GetSafeNormal());
 	return FMath::Acos(DotResult) <= DefenseDegrees;
+}
+
+void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& DamageSpec)
+{
+	UAbilitySystemComponent* OwningAbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	FGameplayEffectContextHandle EffectContext = OwningAbilitySystem->MakeEffectContext();
+	EffectContext.AddSourceObject(DamageSpec.SourceObject.Get());
+	EffectContext.AddInstigator(DamageSpec.Instigator.Get(), DamageSpec.DamageCauser.Get());
+	FGameplayEffectSpecHandle EffectSpec = OwningAbilitySystem->MakeOutgoingSpec(DamageSpec.DamageEffect, 1.0f, EffectContext);
+	EffectSpec.Data->SetSetByCallerMagnitude(
+		DungeonRealmsGameplayTags::SetByCaller_Damage_AttackDamage_Coefficient,
+		DamageSpec.AttackDamageCoefficient
+	);
+	EffectSpec.Data->SetSetByCallerMagnitude(
+		DungeonRealmsGameplayTags::SetByCaller_Damage_AbilityPower_Coefficient,
+		DamageSpec.AbilityPowerCoefficient
+	);
+	OwningAbilitySystem->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data);
 }

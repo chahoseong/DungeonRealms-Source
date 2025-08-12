@@ -27,6 +27,18 @@ TSubclassOf<UDungeonRealmsEquipmentDefinition> UDungeonRealmsEquipmentInstance::
 	return EquipmentDefinition;
 }
 
+FDungeonRealmsEquipmentId UDungeonRealmsEquipmentInstance::GetEquipmentId() const
+{
+	const UDungeonRealmsEquipmentDefinition* EquipmentDefault = GetDefault<UDungeonRealmsEquipmentDefinition>(EquipmentDefinition);
+	return EquipmentDefault->EquipmentId;
+}
+
+const TArray<FEquipmentAttributeBonus>& UDungeonRealmsEquipmentInstance::GetAttributeBonuses() const
+{
+	const UDungeonRealmsEquipmentDefinition* EquipmentDefault = GetDefault<UDungeonRealmsEquipmentDefinition>(EquipmentDefinition);
+	return EquipmentDefault->AttributeBonuses;
+}
+
 void UDungeonRealmsEquipmentInstance::AddEquipmentActor(AActor* EquipmentActor)
 {
 	SpawnedActors.Add(EquipmentActor);

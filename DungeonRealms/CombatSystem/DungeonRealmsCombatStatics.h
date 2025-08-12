@@ -5,6 +5,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DungeonRealmsCombatStatics.generated.h"
 
+struct FDamageSpec;
+
 UCLASS()
 class DUNGEONREALMS_API UDungeonRealmsCombatStatics : public UBlueprintFunctionLibrary
 {
@@ -19,4 +21,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Dungeon Realms|Combat")
 	static ETeamAttitude::Type GetTeamAttitudeTowards(const AActor* QueryActor, const AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|Combat")
+	static void ApplyDamageEffectToTarget(const AActor* TargetActor, const FDamageSpec& DamageSpec);
 };

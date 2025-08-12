@@ -10,5 +10,8 @@ class DUNGEONREALMS_API UDungeonRealmsBoxAttackTracer : public UDungeonRealmsAtt
 	GENERATED_BODY()
 
 protected:
+	virtual FName GetTraceTag() const override;
+	virtual TStatId GetStatId() const override;
+	
 	virtual void PerformTrace(TArray<FHitResult>& OutHits) override;
 };

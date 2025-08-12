@@ -15,6 +15,7 @@ public class DungeonRealms : ModuleRules
 			"GameplayTags",
 			"GameplayAbilities",
 			"GameplayTasks",
+			"UMG"
 		]);
 		
 		PublicIncludePaths.AddRange([

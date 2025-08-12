@@ -20,6 +20,9 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectToApply, const TMap<FGameplayTag, float>& SetByCallers);
+	void RemoveActiveEffect(const FActiveGameplayEffectHandle& ActiveEffectHandle);
+	
 	//~Begin APawn interface
 	virtual void PossessedBy(AController* NewController) override;
 	//~End APawn interface

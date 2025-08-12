@@ -22,10 +22,15 @@ public:
 	T* GetHitboxComponent() const;
 
 protected:
+	virtual FName GetTraceTag() const;
+	virtual TStatId GetStatId() const;
+	
 	virtual void PerformTrace(TArray<FHitResult>& OutHits);
 
 	const FTransform& GetLastHitboxTransform() const;
 	FCollisionObjectQueryParams GetObjectQueryParams() const;
+	const FCollisionQueryParams& GetCollisionQueryParams() const;
+	FCollisionQueryParams& GetCollisionQueryParams();
 
 	UDungeonRealmsCombatSystemComponent* GetCombatSystem() const;
 
@@ -41,9 +46,10 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool bDrawDebug = false;
-
+	
 private:
 	TWeakObjectPtr<USceneComponent> HitboxComponent;
+	FCollisionQueryParams CollisionQueryParams;
 	FTransform LastHitboxTransform;
 };
 

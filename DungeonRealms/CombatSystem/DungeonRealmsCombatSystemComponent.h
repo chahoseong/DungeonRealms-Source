@@ -4,7 +4,32 @@
 
 #include "DungeonRealmsCombatSystemComponent.generated.h"
 
+class UGameplayEffect;
 class UDungeonRealmsAttackTracer;
+
+USTRUCT(BlueprintType)
+struct FDamageSpec
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> DamageEffect;
+
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<UObject> SourceObject;
+
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> Instigator;
+
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> DamageCauser;
+
+	UPROPERTY(BlueprintReadWrite)
+	float AttackDamageCoefficient;
+
+	UPROPERTY(BlueprintReadWrite)
+	float AbilityPowerCoefficient;
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DUNGEONREALMS_API UDungeonRealmsCombatSystemComponent : public UActorComponent
@@ -31,6 +56,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool CanDefendAgainst(const AActor* Attacker, float DefenseDegrees) const;
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageEffect(const FDamageSpec& DamageSpec);
 	
 	bool IsGuarding() const;
 

@@ -1,4 +1,9 @@
 ﻿#include "Equipment/DungeonRealmsEquipmentManagerComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/Data/DungeonRealmsAttributeDefinition.h"
+#include "Characters/DungeonRealmsCharacter.h"
 #include "Equipment/DungeonRealmsEquipmentDefinition.h"
 #include "Equipment/DungeonRealmsEquipmentInstance.h"
 #include "Engine/ActorChannel.h"
@@ -26,6 +31,7 @@ UDungeonRealmsEquipmentInstance* UDungeonRealmsEquipmentManagerComponent::Equip(
 			{
 				AddReplicatedSubObject(Result);
 			}
+			ApplyEquipEffect(Result);
 		}
 	}
 	
@@ -39,6 +45,7 @@ void UDungeonRealmsEquipmentManagerComponent::Unequip(UDungeonRealmsEquipmentIns
 		return;
 	}
 
+	RemoveEquipEffect(EquipmentInstance);
 	if (IsUsingRegisteredSubObjectList())
 	{
 		RemoveReplicatedSubObject(EquipmentInstance);
@@ -121,4 +128,42 @@ void UDungeonRealmsEquipmentManagerComponent::OnEquipmentReplicatedRemove(
 	UDungeonRealmsEquipmentInstance* EquipmentInstance)
 {
 	EquipmentInstance->OnUnequipped();
+}
+
+void UDungeonRealmsEquipmentManagerComponent::ApplyEquipEffect(const UDungeonRealmsEquipmentInstance* EquipmentInstance)
+{
+	ADungeonRealmsCharacter* OwningCharacter = GetOwner<ADungeonRealmsCharacter>();
+	if (!IsValid(OwningCharacter))
+	{
+		return;
+	}
+
+	TMap<FGameplayTag, float> AttributeBonuses;
+	for (const FEquipmentAttributeBonus& Bonus : EquipmentInstance->GetAttributeBonuses())
+	{
+		AttributeBonuses.Add(Bonus.AttributeTag, Bonus.Magnitude);
+	}
+
+	if (AttributeBonuses.Num() > 0)
+	{
+		FActiveGameplayEffectHandle ActiveEffectHandle = OwningCharacter->ApplyEffectToSelf(
+			EquipEffectClass, AttributeBonuses);
+		ActiveEquipEffectHandles.Add(EquipmentInstance->GetEquipmentId(), ActiveEffectHandle);
+	}
+}
+
+void UDungeonRealmsEquipmentManagerComponent::RemoveEquipEffect(const UDungeonRealmsEquipmentInstance* EquipmentInstance)
+{
+	ADungeonRealmsCharacter* OwningCharacter = GetOwner<ADungeonRealmsCharacter>();
+	if (!IsValid(OwningCharacter))
+	{
+		return;
+	}
+
+	FActiveGameplayEffectHandle ActiveEffectHandle;
+	ActiveEquipEffectHandles.RemoveAndCopyValue(EquipmentInstance->GetEquipmentId(), ActiveEffectHandle);
+	if (ActiveEffectHandle.IsValid())
+	{
+		OwningCharacter->RemoveActiveEffect(ActiveEffectHandle);
+	}
 }

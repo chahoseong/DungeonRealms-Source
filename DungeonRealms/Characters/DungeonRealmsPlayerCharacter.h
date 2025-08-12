@@ -36,7 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsEquipmentManagerComponent> EquipmentManagerComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

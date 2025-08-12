@@ -1,16 +1,21 @@
 ﻿#include "CombatSystem/DungeonRealmsBoxAttackTracer.h"
-#include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "KismetTraceUtils.h"
 #include "Kismet/KismetMathLibrary.h"
 
+FName UDungeonRealmsBoxAttackTracer::GetTraceTag() const
+{
+	return SCENE_QUERY_STAT_NAME_ONLY(BoxAttackTracer_PerformTrace);
+}
+
+TStatId UDungeonRealmsBoxAttackTracer::GetStatId() const
+{
+	return SCENE_QUERY_STAT_ONLY(BoxAttackTracer_PerformTrace);
+}
+
 void UDungeonRealmsBoxAttackTracer::PerformTrace(TArray<FHitResult>& OutHits)
 {
 	UBoxComponent* BoxComponent = GetHitboxComponent<UBoxComponent>();
-	
-	FCollisionQueryParams CollisionQueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(AttackBoxTracer_PerformTrace), false);;
-	CollisionQueryParams.AddIgnoredActor(GetCombatSystem()->GetOwner());
-	CollisionQueryParams.AddIgnoredActor(BoxComponent->GetOwner());
 	
 	for (int32 i = 0; i < Substeps; ++i)
 	{
@@ -41,13 +46,13 @@ void UDungeonRealmsBoxAttackTracer::PerformTrace(TArray<FHitResult>& OutHits)
 			TraceAverageTransform.GetRotation(),
 			GetObjectQueryParams(),
 			FCollisionShape::MakeBox(BoxComponent->GetScaledBoxExtent()),
-			CollisionQueryParams
+			GetCollisionQueryParams()
 		);
 
 		for (const FHitResult& Hit : SubHits)
 		{
 			AActor* HitActor = Hit.GetActor();
-			CollisionQueryParams.AddIgnoredActor(HitActor);
+			GetCollisionQueryParams().AddIgnoredActor(HitActor);
 		}
 		
 		OutHits.Append(SubHits);

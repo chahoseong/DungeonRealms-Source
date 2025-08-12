@@ -1,12 +1,14 @@
 ﻿#include "Player/DungeonRealmsPlayerController.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/DungeonRealmsAbilitySystemComponent.h"
-#include "Character/DungeonRealmsPlayerCharacter.h"
+#include "Characters/DungeonRealmsPlayerCharacter.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "DungeonRealmsLogChannels.h"
 #include "EnhancedInputSubsystems.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
+#include "GameFramework/PlayerState.h"
 #include "Input/DungeonRealmsInputComponent.h"
+#include "UI/DungeonRealmsHUD.h"
 
 ADungeonRealmsPlayerController::ADungeonRealmsPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -85,6 +87,16 @@ void ADungeonRealmsPlayerController::Input_AbilityInputReleased(FGameplayTag Inp
 	}
 }
 
+void ADungeonRealmsPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	if (IsLocalController() && IsValid(PlayerState))
+	{
+		SetupOverlay();
+	}
+}
+
 void ADungeonRealmsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -105,6 +117,26 @@ void ADungeonRealmsPlayerController::PostProcessInput(const float DeltaTime, con
 	}
 	
 	Super::PostProcessInput(DeltaTime, bGamePaused);
+}
+
+void ADungeonRealmsPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (!bOverlayInitialized)
+	{
+		SetupOverlay();
+	}
+}
+
+void ADungeonRealmsPlayerController::SetupOverlay() const
+{
+	ADungeonRealmsHUD* DungeonRealmsHUD = GetHUD<ADungeonRealmsHUD>();
+	if (IsValid(DungeonRealmsHUD))
+	{
+		DungeonRealmsHUD->InitOverlay();
+		bOverlayInitialized = true;
+	}
 }
 
 void ADungeonRealmsPlayerController::SetGenericTeamId(const FGenericTeamId& NewTeamID)

@@ -11,6 +11,10 @@ void UDungeonRealmsAttackTracer::BeginTrace(UPrimitiveComponent* InHitboxCompone
 	
 	HitboxComponent = InHitboxComponent;
 	LastHitboxTransform = HitboxComponent->GetComponentTransform();
+
+	CollisionQueryParams = FCollisionQueryParams(GetTraceTag(), GetStatId(), false);
+	CollisionQueryParams.AddIgnoredActor(GetCombatSystem()->GetOwner());
+	CollisionQueryParams.AddIgnoredActor(HitboxComponent->GetOwner());
 }
 
 TArray<FHitResult> UDungeonRealmsAttackTracer::PerformTrace()
@@ -50,11 +54,22 @@ void UDungeonRealmsAttackTracer::EndTrace()
 {
 	HitboxComponent.Reset();
 	LastHitboxTransform = FTransform::Identity;
+	CollisionQueryParams = FCollisionQueryParams::DefaultQueryParam;
 }
 
 AActor* UDungeonRealmsAttackTracer::GetSourceActor() const
 {
 	return HitboxComponent.IsValid() ? HitboxComponent->GetOwner() : nullptr;
+}
+
+FName UDungeonRealmsAttackTracer::GetTraceTag() const
+{
+	return SCENE_QUERY_STAT_NAME_ONLY(AttackBoxTracer_PerformTrace);
+}
+
+TStatId UDungeonRealmsAttackTracer::GetStatId() const
+{
+	return SCENE_QUERY_STAT_ONLY(AttackBoxTracer_PerformTrace);
 }
 
 const FTransform& UDungeonRealmsAttackTracer::GetLastHitboxTransform() const
@@ -66,6 +81,16 @@ FCollisionObjectQueryParams UDungeonRealmsAttackTracer::GetObjectQueryParams() c
 {
 	static FCollisionObjectQueryParams ObjectQueryParams(ObjectTypes);
 	return ObjectQueryParams;
+}
+
+const FCollisionQueryParams& UDungeonRealmsAttackTracer::GetCollisionQueryParams() const
+{
+	return CollisionQueryParams;
+}
+
+FCollisionQueryParams& UDungeonRealmsAttackTracer::GetCollisionQueryParams()
+{
+	return CollisionQueryParams;
 }
 
 UDungeonRealmsCombatSystemComponent* UDungeonRealmsAttackTracer::GetCombatSystem() const

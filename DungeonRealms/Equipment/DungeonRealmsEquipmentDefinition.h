@@ -24,13 +24,18 @@ protected:
 	int32 EquipmentId = INVALID_EQUIPMENT_ID;
 };
 
+FORCEINLINE uint32 GetTypeHash(const FDungeonRealmsEquipmentId& EquipmentId)
+{
+	return EquipmentId.ToInt();
+}
+
 USTRUCT(BlueprintType)
 struct FEquipmentAttributeBonus
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	FGameplayAttribute Attribute;
+	FGameplayTag AttributeTag;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Magnitude;

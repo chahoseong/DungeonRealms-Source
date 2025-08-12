@@ -29,9 +29,14 @@ public:
 	
 protected:
 	virtual void SetupInputComponent() override;
+	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 
+	virtual void OnRep_PlayerState() override;
+
 private:
+	void SetupOverlay() const;
+	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_SwitchTarget_Triggered(const FInputActionValue& InputActionValue);
@@ -53,4 +58,5 @@ protected:
 	
 private:
 	FVector2D TargetSwitchingDirection;
+	mutable bool bOverlayInitialized = false;
 };

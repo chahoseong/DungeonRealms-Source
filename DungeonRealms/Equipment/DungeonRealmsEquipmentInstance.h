@@ -23,6 +23,8 @@ public:
 	//~End UObject interface
 	
 	TSubclassOf<UDungeonRealmsEquipmentDefinition> GetEquipmentDefinition() const;
+	FDungeonRealmsEquipmentId GetEquipmentId() const;
+	const TArray<FEquipmentAttributeBonus>& GetAttributeBonuses() const;
 	
 	void AddEquipmentActor(AActor* EquipmentActor);
 	void DestroyEquipmentActors();

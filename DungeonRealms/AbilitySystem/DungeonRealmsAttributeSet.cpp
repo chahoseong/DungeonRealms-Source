@@ -74,6 +74,8 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 				EventTag,
 				EventData
 			);
+
+			UE_LOG(LogTemp, Warning, TEXT("Incoming Damage: %f, Current Health: %f"), IncomingDamageMagnitude, GetHealth());
 		}
 	}
 }

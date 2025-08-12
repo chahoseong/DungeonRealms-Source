@@ -1,8 +1,10 @@
-#include "Character/DungeonRealmsCharacter.h"
+#include "Characters/DungeonRealmsCharacter.h"
 
+#include "AbilitySystemComponent.h"
+#include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "DungeonRealmsCharacterMovementComponent.h"
 #include "DungeonRealmsLogChannels.h"
-#include "CombatSystem/DungeonRealmsCombatStatics.h"
+#include "GameplayEffectTypes.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Net/UnrealNetwork.h"
@@ -80,6 +82,25 @@ void ADungeonRealmsCharacter::InitializeAbilitySets()
 			}
 		}));
 	}
+}
+
+FActiveGameplayEffectHandle ADungeonRealmsCharacter::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectToApply,
+                                                                const TMap<FGameplayTag, float>& SetByCallers)
+{
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	const FGameplayEffectSpecHandle EffectSpec = AbilitySystemComponent->MakeOutgoingSpec(EffectToApply, 1.0f, EffectContext);
+	for (const auto& Pair : SetByCallers)
+	{
+		EffectSpec.Data->SetSetByCallerMagnitude(Pair.Key, Pair.Value);
+	}
+	return AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpec.Data, GetAbilitySystemComponent());
+}
+
+void ADungeonRealmsCharacter::RemoveActiveEffect(const FActiveGameplayEffectHandle& ActiveEffectHandle)
+{
+	AbilitySystemComponent->RemoveActiveGameplayEffect(ActiveEffectHandle);
 }
 
 UAbilitySystemComponent* ADungeonRealmsCharacter::GetAbilitySystemComponent() const

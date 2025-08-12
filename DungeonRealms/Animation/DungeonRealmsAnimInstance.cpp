@@ -1,7 +1,7 @@
 ﻿#include "Animation/DungeonRealmsAnimInstance.h"
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemComponent.h"
-#include "Character/DungeonRealmsCharacterMovementComponent.h"
+#include "Characters/DungeonRealmsCharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 
 #if WITH_EDITOR
