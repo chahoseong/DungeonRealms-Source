@@ -24,16 +24,17 @@ void ADungeonRealmsEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		InitializeAttributes();
-	}
-
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	if (UDungeonRealmsAnimInstance* DungeonRealmsAnimInstance =
 		Cast<UDungeonRealmsAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		DungeonRealmsAnimInstance->InitializeWithAbilitySystem(AbilitySystemComponent);
+	}
+
+	if (HasAuthority())
+	{
+		InitializeAttributes();
+		InitializeAbilitySets();
 	}
 }
 
