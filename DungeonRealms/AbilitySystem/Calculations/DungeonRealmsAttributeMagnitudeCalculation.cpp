@@ -23,7 +23,7 @@ float UDungeonRealmsAttributeMagnitudeCalculation::CalculateBaseMagnitude_Implem
 		Magnitude = FMath::Max(Magnitude, 0.0f);
 		Total += Magnitude * CapturedAttributeToCoefficients[AttributeToCapture.AttributeToCapture];
 	}
-	
-	const float BaseAttributeMagnitude = GetSetByCallerMagnitudeByTag(Spec, AttributeTag);
+
+	const float BaseAttributeMagnitude = Spec.GetSetByCallerMagnitude(AttributeTag, false, 0.0f);
 	return BaseAttributeMagnitude + Total;
 }
