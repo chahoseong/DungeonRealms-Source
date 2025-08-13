@@ -61,7 +61,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Abilities")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DungeonRealms|Abilities")
 	TArray<TSoftObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Replicated)

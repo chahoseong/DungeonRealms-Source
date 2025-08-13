@@ -5,6 +5,8 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "DungeonRealmsEnemyController.generated.h"
 
+class UBehaviorTreeComponent;
+
 UCLASS()
 class DUNGEONREALMS_API ADungeonRealmsEnemyController : public ADetourCrowdAIController
 {
@@ -29,18 +31,24 @@ private:
 	void InitializeCrowdFollowingComponent() const;
 	
 protected:
+	UPROPERTY()
+	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category="Detour Crowd Avoidance Config")
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Detour Crowd Avoidance Config")
 	bool bEnableDetourCrowdAvoidance;
 
-	UPROPERTY(EditDefaultsOnly, Category="Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance", UIMin="1", UIMax="4"))
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance", UIMin="1", UIMax="4"))
 	int32 DetourCrowdAvoidanceQuality = 4;
 
-	UPROPERTY(EditDefaultsOnly, Category="Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance"))
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance"))
 	int32 AvoidanceGroup = 1;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance"))
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Detour Crowd Avoidance Config", meta=(EditCondition="bEnableDetourCrowdAvoidance"))
 	float CollisionQueryRange = 600.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Blackboard")
+	FName TargetActorKey;
 };

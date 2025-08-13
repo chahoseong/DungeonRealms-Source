@@ -1,6 +1,8 @@
 ﻿#include "AI/DungeonRealmsEnemyController.h"
 
 #include "DungeonRealmsLogChannels.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -9,6 +11,9 @@
 ADungeonRealmsEnemyController::ADungeonRealmsEnemyController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
+	
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnAIPerceptionUpdated);
 }
@@ -47,7 +52,13 @@ void ADungeonRealmsEnemyController::InitializeCrowdFollowingComponent() const
 
 void ADungeonRealmsEnemyController::OnAIPerceptionUpdated_Implementation(AActor* Actor, FAIStimulus Stimulus)
 {
-
+	if (HasAuthority())
+	{
+		if (Stimulus.WasSuccessfullySensed())
+		{
+			GetBlackboardComponent()->SetValueAsObject(TargetActorKey, Actor);
+		}
+	}
 }
 
 void ADungeonRealmsEnemyController::SetGenericTeamId(const FGenericTeamId& NewTeamID)

@@ -42,9 +42,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsCombatSystemComponent> CombatSystemComponent;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDungeonRealmsTargetLockComponent> TargetLockComponent;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Equipment")
 	TArray<TSubclassOf<UDungeonRealmsEquipmentDefinition>> StartupEquipments;
 };

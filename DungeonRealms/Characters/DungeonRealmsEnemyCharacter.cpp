@@ -1,12 +1,14 @@
 ﻿#include "Characters/DungeonRealmsEnemyCharacter.h"
-
-#include "DungeonRealmsGameplayTags.h"
-#include "DungeonRealmsLogChannels.h"
 #include "AbilitySystem/DungeonRealmsAbilitySystemComponent.h"
 #include "AbilitySystem/DungeonRealmsAttributeSet.h"
 #include "AbilitySystem/Data/DungeonRealmsAttributeDefinition.h"
 #include "Animation/DungeonRealmsAnimInstance.h"
+#include "AI/DungeonRealmsEnemyController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
+#include "DungeonRealmsLogChannels.h"
+#include "Net/UnrealNetwork.h"
 
 ADungeonRealmsEnemyCharacter::ADungeonRealmsEnemyCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -18,6 +20,22 @@ ADungeonRealmsEnemyCharacter::ADungeonRealmsEnemyCharacter(const FObjectInitiali
 	AttributeSet = CreateDefaultSubobject<UDungeonRealmsAttributeSet>(TEXT("AttributeSet"));
 
 	CombatSystemComponent = CreateDefaultSubobject<UDungeonRealmsCombatSystemComponent>(TEXT("CombatSystemComponent"));
+}
+
+void ADungeonRealmsEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, SpawnedWeapons);
+}
+
+void ADungeonRealmsEnemyCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ADungeonRealmsEnemyController* EnemyController = Cast<ADungeonRealmsEnemyController>(NewController);
+	EnemyController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	EnemyController->RunBehaviorTree(BehaviorTree);
 }
 
 void ADungeonRealmsEnemyCharacter::BeginPlay()
@@ -35,7 +53,20 @@ void ADungeonRealmsEnemyCharacter::BeginPlay()
 	{
 		InitializeAttributes();
 		InitializeAbilitySets();
+		InitializeWeapons();
 	}
+
+	BindAttributeChanges();
+	BroadcastInitialAttributes();
+}
+
+void ADungeonRealmsEnemyCharacter::Destroyed()
+{
+	if (HasAuthority())
+	{
+		DestroySpawnedWeapons();
+	}
+	Super::Destroyed();
 }
 
 void ADungeonRealmsEnemyCharacter::InitializeAttributes()
@@ -69,4 +100,66 @@ void ADungeonRealmsEnemyCharacter::InitializeAttributes()
 
 	// Vital
 	ApplyEffectToSelf(DefaultVitalAttributes, TMap<FGameplayTag, float>());
+}
+
+void ADungeonRealmsEnemyCharacter::BindAttributeChanges() const
+{
+	// Health
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UDungeonRealmsAttributeSet::GetHealthAttribute())
+					  .AddLambda([this](const FOnAttributeChangeData& Data) {
+						  OnHealthChanged.Broadcast(Data.NewValue);
+					  });
+
+	// Max Health
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UDungeonRealmsAttributeSet::GetMaxHealthAttribute())
+						  .AddLambda([this](const FOnAttributeChangeData& Data) {
+							  OnMaxHealthChanged.Broadcast(Data.NewValue);
+						  });
+}
+
+void ADungeonRealmsEnemyCharacter::BroadcastInitialAttributes() const
+{
+	UDungeonRealmsAttributeSet* DungeonRealmsAttributeSet = GetAttributeSet<UDungeonRealmsAttributeSet>();
+	OnHealthChanged.Broadcast(DungeonRealmsAttributeSet->GetHealth());
+	OnMaxHealthChanged.Broadcast(DungeonRealmsAttributeSet->GetMaxHealth());
+}
+
+void ADungeonRealmsEnemyCharacter::InitializeWeapons()
+{
+	USceneComponent* AttachTarget = GetMesh();
+	
+	if (bUseRetargetMesh)
+	{
+		for (USceneComponent* Child : GetMesh()->GetAttachChildren())
+		{
+			if (Child->IsA(USkeletalMeshComponent::StaticClass()))
+			{
+				AttachTarget = Child;
+				break;
+			}
+		}
+	}
+	
+	for (const FEnemyWeaponToSpawn& WeaponToSpawn : WeaponActorsToSpawn)
+	{
+		AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(
+			WeaponToSpawn.WeaponActorClass,
+			FTransform::Identity,
+			this
+		);
+		NewActor->FinishSpawning(FTransform::Identity, true);
+		NewActor->SetActorRelativeTransform(WeaponToSpawn.AttachTransform);
+		NewActor->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform, WeaponToSpawn.AttachSocketName);
+		
+		SpawnedWeapons.Add(NewActor);
+	}
+}
+
+void ADungeonRealmsEnemyCharacter::DestroySpawnedWeapons()
+{
+	for (AActor* Weapon : SpawnedWeapons)
+	{
+		Weapon->Destroy();
+	}
+	SpawnedWeapons.Reset();
 }
