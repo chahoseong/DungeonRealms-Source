@@ -15,7 +15,7 @@ ADungeonRealmsCharacter::ADungeonRealmsCharacter(const FObjectInitializer& Objec
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void ADungeonRealmsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

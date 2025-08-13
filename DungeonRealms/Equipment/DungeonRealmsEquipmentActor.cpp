@@ -3,5 +3,5 @@
 ADungeonRealmsEquipmentActor::ADungeonRealmsEquipmentActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	SetReplicates(true);
+	bReplicates = true;
 }
