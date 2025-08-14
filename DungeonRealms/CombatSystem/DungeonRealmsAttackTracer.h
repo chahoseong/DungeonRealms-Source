@@ -25,13 +25,13 @@ protected:
 	virtual FName GetTraceTag() const;
 	virtual TStatId GetStatId() const;
 	
-	virtual void PerformTrace(TArray<FHitResult>& OutHits);
+	virtual TArray<FHitResult> PerformSubTrace(int32 Step,
+		FCollisionObjectQueryParams ObjectQueryParams,
+		FCollisionQueryParams CollisionQueryParams);
+
+	FCollisionQueryParams MakeCollisionQueryParams() const;
 
 	const FTransform& GetLastHitboxTransform() const;
-	FCollisionObjectQueryParams GetObjectQueryParams() const;
-	const FCollisionQueryParams& GetCollisionQueryParams() const;
-	FCollisionQueryParams& GetCollisionQueryParams();
-
 	UDungeonRealmsCombatSystemComponent* GetCombatSystem() const;
 
 private:
@@ -49,8 +49,8 @@ protected:
 	
 private:
 	TWeakObjectPtr<USceneComponent> HitboxComponent;
-	FCollisionQueryParams CollisionQueryParams;
 	FTransform LastHitboxTransform;
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 };
 
 template <typename T> requires std::is_base_of_v<UPrimitiveComponent, T>

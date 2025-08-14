@@ -11,23 +11,63 @@ void UDungeonRealmsAttackTracer::BeginTrace(UPrimitiveComponent* InHitboxCompone
 	
 	HitboxComponent = InHitboxComponent;
 	LastHitboxTransform = HitboxComponent->GetComponentTransform();
-
-	CollisionQueryParams = FCollisionQueryParams(GetTraceTag(), GetStatId(), false);
-	CollisionQueryParams.AddIgnoredActor(GetCombatSystem()->GetOwner());
-	CollisionQueryParams.AddIgnoredActor(HitboxComponent->GetOwner());
 }
 
 TArray<FHitResult> UDungeonRealmsAttackTracer::PerformTrace()
 {
-	TArray<FHitResult> Hits;
-	PerformTrace(Hits);
-	Hits = FilterBlockedHitsFromObstacle(Hits);
+	TArray<FHitResult> TotalHits;
+	
+	for (int32 i = 0; i < Substeps; ++i)
+	{
+		TArray<FHitResult> SubHits = PerformSubTrace(
+			i,
+			FCollisionObjectQueryParams(ObjectTypes),
+			MakeCollisionQueryParams()
+		);
+
+		for (const FHitResult& Hit : SubHits)
+		{
+			IgnoreActors.Add(Hit.GetActor());
+		}
+
+		TotalHits.Append(SubHits);
+	}
+
+	for (const TWeakObjectPtr Actor : IgnoreActors)
+	{
+		if (Actor.IsValid())
+		{
+			const bool bIsServer = GetCombatSystem()->GetOwner()->HasAuthority();
+			const FString Label = FString::Printf(TEXT("[%s]"), bIsServer ? TEXT("Server") : TEXT("Client"));
+			UE_LOG(LogTemp, Warning, TEXT("%s Ignore Actor: %s"), *Label, *Actor->GetActorNameOrLabel());	
+		}
+	}
+	
+	TotalHits = FilterBlockedHitsFromObstacle(TotalHits);
 	LastHitboxTransform = HitboxComponent->GetComponentTransform();
-	return Hits;
+	
+	return TotalHits;
 }
 
-void UDungeonRealmsAttackTracer::PerformTrace(TArray<FHitResult>& OutHits)
+FCollisionQueryParams UDungeonRealmsAttackTracer::MakeCollisionQueryParams() const
 {
+	FCollisionQueryParams CollisionQueryParams(GetTraceTag(), GetStatId(), false);
+	CollisionQueryParams.AddIgnoredActor(GetCombatSystem()->GetOwner());
+	CollisionQueryParams.AddIgnoredActor(HitboxComponent->GetOwner());
+	for (const TWeakObjectPtr Actor : IgnoreActors)
+	{
+		if (Actor.IsValid())
+		{
+			CollisionQueryParams.AddIgnoredActor(Actor.Get());
+		}
+	}
+	return CollisionQueryParams;
+}
+
+TArray<FHitResult> UDungeonRealmsAttackTracer::PerformSubTrace(int32 Step,
+	FCollisionObjectQueryParams ObjectQueryParams, FCollisionQueryParams CollisionQueryParams)
+{
+	return TArray<FHitResult>();
 }
 
 TArray<FHitResult> UDungeonRealmsAttackTracer::FilterBlockedHitsFromObstacle(const TArray<FHitResult>& Hits) const
@@ -52,9 +92,9 @@ TArray<FHitResult> UDungeonRealmsAttackTracer::FilterBlockedHitsFromObstacle(con
 
 void UDungeonRealmsAttackTracer::EndTrace()
 {
+	IgnoreActors.Reset();
 	HitboxComponent.Reset();
 	LastHitboxTransform = FTransform::Identity;
-	CollisionQueryParams = FCollisionQueryParams::DefaultQueryParam;
 }
 
 AActor* UDungeonRealmsAttackTracer::GetSourceActor() const
@@ -75,22 +115,6 @@ TStatId UDungeonRealmsAttackTracer::GetStatId() const
 const FTransform& UDungeonRealmsAttackTracer::GetLastHitboxTransform() const
 {
 	return LastHitboxTransform;
-}
-
-FCollisionObjectQueryParams UDungeonRealmsAttackTracer::GetObjectQueryParams() const
-{
-	static FCollisionObjectQueryParams ObjectQueryParams(ObjectTypes);
-	return ObjectQueryParams;
-}
-
-const FCollisionQueryParams& UDungeonRealmsAttackTracer::GetCollisionQueryParams() const
-{
-	return CollisionQueryParams;
-}
-
-FCollisionQueryParams& UDungeonRealmsAttackTracer::GetCollisionQueryParams()
-{
-	return CollisionQueryParams;
 }
 
 UDungeonRealmsCombatSystemComponent* UDungeonRealmsAttackTracer::GetCombatSystem() const

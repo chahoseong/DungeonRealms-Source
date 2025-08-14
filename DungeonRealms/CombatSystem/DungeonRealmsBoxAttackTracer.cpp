@@ -13,62 +13,54 @@ TStatId UDungeonRealmsBoxAttackTracer::GetStatId() const
 	return SCENE_QUERY_STAT_ONLY(BoxAttackTracer_PerformTrace);
 }
 
-void UDungeonRealmsBoxAttackTracer::PerformTrace(TArray<FHitResult>& OutHits)
+TArray<FHitResult> UDungeonRealmsBoxAttackTracer::PerformSubTrace(int32 Step,
+	FCollisionObjectQueryParams ObjectQueryParams, FCollisionQueryParams CollisionQueryParams)
 {
 	UBoxComponent* BoxComponent = GetHitboxComponent<UBoxComponent>();
+
+	FTransform TraceStartTransform = UKismetMathLibrary::TLerp(
+		GetLastHitboxTransform(),
+		BoxComponent->GetComponentTransform(),
+		static_cast<float>(Step) / Substeps,
+		ELerpInterpolationMode::DualQuatInterp
+	);
+	FTransform TraceEndTransform = UKismetMathLibrary::TLerp(
+		GetLastHitboxTransform(),
+		BoxComponent->GetComponentTransform(),
+		static_cast<float>(Step + 1) / Substeps,
+		ELerpInterpolationMode::DualQuatInterp
+	);
+	FTransform TraceAverageTransform = UKismetMathLibrary::TLerp(
+		TraceStartTransform,
+		TraceEndTransform,
+		0.5f,
+		ELerpInterpolationMode::DualQuatInterp
+	);
+
+	TArray<FHitResult> SubHits;
+	BoxComponent->GetWorld()->SweepMultiByObjectType(
+		SubHits,
+		TraceStartTransform.GetLocation(),
+		TraceEndTransform.GetLocation(),
+		TraceAverageTransform.GetRotation(),
+		ObjectQueryParams,
+		FCollisionShape::MakeBox(BoxComponent->GetScaledBoxExtent()),
+		CollisionQueryParams
+	);
 	
-	for (int32 i = 0; i < Substeps; ++i)
+	if (bDrawDebug && GetSourceActor()->HasAuthority())
 	{
-		FTransform TraceStartTransform = UKismetMathLibrary::TLerp(
-			GetLastHitboxTransform(),
-			BoxComponent->GetComponentTransform(),
-			static_cast<float>(i) / Substeps,
-			ELerpInterpolationMode::DualQuatInterp
-		);
-		FTransform TraceEndTransform = UKismetMathLibrary::TLerp(
-			GetLastHitboxTransform(),
-			BoxComponent->GetComponentTransform(),
-			static_cast<float>(i + 1) / Substeps,
-			ELerpInterpolationMode::DualQuatInterp
-		);
-		FTransform TraceAverageTransform = UKismetMathLibrary::TLerp(
-			TraceStartTransform,
-			TraceEndTransform,
-			0.5f,
-			ELerpInterpolationMode::DualQuatInterp
-		);
-		
-		TArray<FHitResult> SubHits;
-		BoxComponent->GetWorld()->SweepMultiByObjectType(
-			SubHits,
+		DrawDebugSweptBox(
+			GetWorld(),
 			TraceStartTransform.GetLocation(),
 			TraceEndTransform.GetLocation(),
-			TraceAverageTransform.GetRotation(),
-			GetObjectQueryParams(),
-			FCollisionShape::MakeBox(BoxComponent->GetScaledBoxExtent()),
-			GetCollisionQueryParams()
+			TraceAverageTransform.GetRotation().Rotator(),
+			BoxComponent->GetScaledBoxExtent(),
+			SubHits.Num() > 0 ? FColor::Red : FColor::Green,
+			false,
+			2.0f
 		);
-
-		for (const FHitResult& Hit : SubHits)
-		{
-			AActor* HitActor = Hit.GetActor();
-			GetCollisionQueryParams().AddIgnoredActor(HitActor);
-		}
-		
-		OutHits.Append(SubHits);
-
-		if (bDrawDebug && GetSourceActor()->HasAuthority())
-		{
-			DrawDebugSweptBox(
-				GetWorld(),
-				TraceStartTransform.GetLocation(),
-				TraceEndTransform.GetLocation(),
-				TraceAverageTransform.GetRotation().Rotator(),
-				BoxComponent->GetScaledBoxExtent(),
-				SubHits.Num() > 0 ? FColor::Red : FColor::Green,
-				false,
-				2.0f
-			);
-		}
 	}
+
+	return SubHits;
 }

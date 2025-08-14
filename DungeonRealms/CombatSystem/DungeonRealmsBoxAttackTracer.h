@@ -13,5 +13,9 @@ protected:
 	virtual FName GetTraceTag() const override;
 	virtual TStatId GetStatId() const override;
 	
-	virtual void PerformTrace(TArray<FHitResult>& OutHits) override;
+	virtual TArray<FHitResult> PerformSubTrace(
+		int32 Step,
+		FCollisionObjectQueryParams ObjectQueryParams,
+		FCollisionQueryParams CollisionQueryParams
+	) override;
 };
