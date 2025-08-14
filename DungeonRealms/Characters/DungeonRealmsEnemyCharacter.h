@@ -34,6 +34,8 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual AActor* GetAttachedActorFromSocket(FName SocketName) const override;
+	
 	//~Begin APawn interface
 	virtual void PossessedBy(AController* NewController) override;
 	//~End APawn interface
@@ -47,8 +49,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
-	
+
 private:
+	void InitializeRetargetMeshComponent();
+	void InitializeAbilitySystem();
 	void InitializeAttributes();
 	void BindAttributeChanges() const;
 	void BroadcastInitialAttributes() const;
@@ -81,6 +85,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Combat")
 	TArray<FEnemyWeaponToSpawn> WeaponActorsToSpawn;
 
+	UPROPERTY()
+	TObjectPtr<USkeletalMeshComponent> RetargetMeshComponent;
+	
 	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Combat")
 	bool bUseRetargetMesh = false;
 

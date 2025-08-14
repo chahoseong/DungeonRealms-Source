@@ -42,12 +42,8 @@ void ADungeonRealmsEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	if (UDungeonRealmsAnimInstance* DungeonRealmsAnimInstance =
-		Cast<UDungeonRealmsAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		DungeonRealmsAnimInstance->InitializeWithAbilitySystem(AbilitySystemComponent);
-	}
+	InitializeRetargetMeshComponent();
+	InitializeAbilitySystem();
 
 	if (HasAuthority())
 	{
@@ -67,6 +63,31 @@ void ADungeonRealmsEnemyCharacter::Destroyed()
 		DestroySpawnedWeapons();
 	}
 	Super::Destroyed();
+}
+
+void ADungeonRealmsEnemyCharacter::InitializeRetargetMeshComponent()
+{
+	if (bUseRetargetMesh)
+	{
+		for (USceneComponent* Child : GetMesh()->GetAttachChildren())
+		{
+			if (Child->IsA(USkeletalMeshComponent::StaticClass()))
+			{
+				RetargetMeshComponent = Cast<USkeletalMeshComponent>(Child);
+				break;
+			}
+		}
+	}
+}
+
+void ADungeonRealmsEnemyCharacter::InitializeAbilitySystem()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	if (UDungeonRealmsAnimInstance* DungeonRealmsAnimInstance =
+		Cast<UDungeonRealmsAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		DungeonRealmsAnimInstance->InitializeWithAbilitySystem(AbilitySystemComponent);
+	}
 }
 
 void ADungeonRealmsEnemyCharacter::InitializeAttributes()
@@ -130,14 +151,11 @@ void ADungeonRealmsEnemyCharacter::InitializeWeapons()
 	
 	if (bUseRetargetMesh)
 	{
-		for (USceneComponent* Child : GetMesh()->GetAttachChildren())
-		{
-			if (Child->IsA(USkeletalMeshComponent::StaticClass()))
-			{
-				AttachTarget = Child;
-				break;
-			}
-		}
+		AttachTarget = RetargetMeshComponent;
+	}
+	else
+	{
+		AttachTarget = GetMesh();
 	}
 	
 	for (const FEnemyWeaponToSpawn& WeaponToSpawn : WeaponActorsToSpawn)
@@ -162,4 +180,23 @@ void ADungeonRealmsEnemyCharacter::DestroySpawnedWeapons()
 		Weapon->Destroy();
 	}
 	SpawnedWeapons.Reset();
+}
+
+AActor* ADungeonRealmsEnemyCharacter::GetAttachedActorFromSocket(FName SocketName) const
+{
+	if (bUseRetargetMesh)
+	{
+		for (const USceneComponent* ChildComponent : RetargetMeshComponent->GetAttachChildren())
+		{
+			if (ChildComponent->GetAttachSocketName() == SocketName)
+			{
+				return ChildComponent->GetOwner();
+			}
+		}
+		return nullptr;
+	}
+	else
+	{
+		return Super::GetAttachedActorFromSocket(SocketName);
+	}
 }

@@ -49,7 +49,7 @@ public:
 		return Cast<T>(GetAttributeSet());
 	}
 
-	AActor* GetAttachedActorFromSocket(FName SocketName) const;
+	virtual AActor* GetAttachedActorFromSocket(FName SocketName) const;
 
 protected:
 	void InitializeAbilitySets();
