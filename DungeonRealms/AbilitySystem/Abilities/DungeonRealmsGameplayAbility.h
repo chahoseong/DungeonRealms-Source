@@ -3,6 +3,8 @@
 #include "Abilities/GameplayAbility.h"
 #include "DungeonRealmsGameplayAbility.generated.h"
 
+class ADungeonRealmsCharacter;
+
 UENUM(BlueprintType)
 enum class EDungeonRealmsAbilityActivationPolicy : uint8
 {
@@ -42,6 +44,9 @@ public:
 	{
 		return Cast<T>(GetControllerFromActorInfo());
 	}
+
+	UFUNCTION(BlueprintPure)
+	ADungeonRealmsCharacter* GetDungeonRealmsCharacterFromActorInfo() const;
 
 	bool IsRunningOnDedicatedServer() const;
 	

@@ -1,7 +1,9 @@
 ﻿#include "AbilitySystem/Abilities/DungeonRealmsGameplayAbility.h"
 
+#include "Characters/DungeonRealmsCharacter.h"
+
 bool UDungeonRealmsGameplayAbility::HasActivationPolicy(UGameplayAbility* Ability,
-														EDungeonRealmsAbilityActivationPolicy ActivationPolicy)
+                                                        EDungeonRealmsAbilityActivationPolicy ActivationPolicy)
 {
 	if (const UDungeonRealmsGameplayAbility* DungeonRealmsGameplayAbility = Cast<UDungeonRealmsGameplayAbility>(Ability))
 	{
@@ -63,6 +65,11 @@ AController* UDungeonRealmsGameplayAbility::GetControllerFromActorInfo() const
 	}
 
 	return nullptr;
+}
+
+ADungeonRealmsCharacter* UDungeonRealmsGameplayAbility::GetDungeonRealmsCharacterFromActorInfo() const
+{
+	return CurrentActorInfo ? Cast<ADungeonRealmsCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr;
 }
 
 bool UDungeonRealmsGameplayAbility::IsRunningOnDedicatedServer() const
