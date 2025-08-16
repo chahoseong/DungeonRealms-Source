@@ -41,6 +41,10 @@ void UDungeonRealmsTargetLockComponent::TickComponent(float DeltaTime, ELevelTic
 		OwningAbilitySystem->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Rolling);
 	if (bIsRolling)
 	{
+		if (!bShouldActorRotateTowardsTarget)
+		{
+			SetTargetLockRotationMode(false);
+		}
 		bShouldActorRotateTowardsTarget = true;
 	}
 	else
@@ -71,35 +75,21 @@ void UDungeonRealmsTargetLockComponent::SetTarget(AActor* InTarget)
 {
 	if (InTarget)
 	{
+		if (bTargetLost)
+		{
+			SetTargetLockRotationMode(true);
+		}
 		if (CurrentLockedTarget != InTarget)
 		{
-			if (CurrentLockedTarget)
-			{
-				if (const ACharacter* Character = Cast<ACharacter>(CurrentLockedTarget))
-				{
-					Character->GetCharacterMovement()->bOrientRotationToMovement = bCachedOrientRotationToMovement;
-				}
-			}
-			if (const ACharacter* TargetCharacter = Cast<ACharacter>(InTarget))
-			{
-				bCachedOrientRotationToMovement = TargetCharacter->GetCharacterMovement()->bOrientRotationToMovement;
-				TargetCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-			}
 			OnTargetLocked.Broadcast();
 		}
 		bTargetLost = false;
 	}
 	else
 	{
-		if (CurrentLockedTarget)
-		{
-			if (const ACharacter* Character = Cast<ACharacter>(CurrentLockedTarget))
-			{
-				Character->GetCharacterMovement()->bOrientRotationToMovement = bCachedOrientRotationToMovement;
-			}
-		}
 		if (!bTargetLost)
 		{
+			SetTargetLockRotationMode(false);
 			OnTargetLost.Broadcast();
 		}
 		bTargetLost = true;
@@ -129,33 +119,17 @@ void UDungeonRealmsTargetLockComponent::UpdateOwnerRotation(float DeltaTime)
 
 		if (bShouldActorRotateTowardsTarget)
 		{
-			if (IsFacingTarget())
-			{
-				bShouldActorRotateTowardsTarget = false;
-			}
-			else
-			{
-				const FRotator ActorRotationStep = FMath::RInterpTo(
-					GetOwner()->GetActorRotation(),
-					TargetRotation,
-					DeltaTime,
-					RotationSpeed
-				);
-				GetOwner()->SetActorRotation(FRotator(0.0f, ActorRotationStep.Yaw, 0.0f));
-			}
-		}
-		else
-		{
-			GetOwner()->SetActorRotation(FRotator(0.0f, ControlRotationStep.Yaw, 0.0f));
+			SetTargetLockRotationMode(true);
+			bShouldActorRotateTowardsTarget = false;
 		}
 	}
 }
 
-bool UDungeonRealmsTargetLockComponent::IsFacingTarget(float Tolerance) const
+bool UDungeonRealmsTargetLockComponent::IsFacingTarget(const FRotator& ControlRotation, float Tolerance) const
 {
-	const FVector ToTarget = (CurrentLockedTarget->GetActorLocation() - GetOwner()->GetActorLocation()).
-	GetSafeNormal();
-	const float DotResult = GetOwner()->GetActorForwardVector().Dot(ToTarget);
+	const FVector ToTarget = (CurrentLockedTarget->GetActorLocation() - GetOwner()->GetActorLocation()).GetSafeNormal2D();
+	const FVector ForwardVector = ControlRotation.RotateVector(FVector::ForwardVector);
+	const float DotResult = ForwardVector.Dot(ToTarget);
 	return DotResult >= Tolerance;
 }
 
@@ -166,6 +140,15 @@ AController* UDungeonRealmsTargetLockComponent::GetOwningController() const
 		return OwningPawn->GetController();
 	}
 	return nullptr;
+}
+
+void UDungeonRealmsTargetLockComponent::SetTargetLockRotationMode(bool bEnabled)
+{
+	if (ACharacter* OwningCharacter = GetOwner<ACharacter>())
+	{
+		OwningCharacter->GetCharacterMovement()->bOrientRotationToMovement = !bEnabled;
+		OwningCharacter->GetCharacterMovement()->bUseControllerDesiredRotation = bEnabled;
+	}
 }
 
 void UDungeonRealmsTargetLockComponent::OnRep_CurrentLockedTarget(AActor* LastLockedTarget)

@@ -34,7 +34,7 @@ public:
 	
 protected:
 	void UpdateOwnerRotation(float DeltaTime);
-	bool IsFacingTarget(float Tolerance = 0.95f) const;
+	bool IsFacingTarget(const FRotator& ControlRotation,  float Tolerance = 0.9f) const;
 	
 	bool IsTargetDead() const;
 	bool IsOwnerDead() const;
@@ -43,6 +43,8 @@ protected:
 	AController* GetOwningController() const;
 
 private:
+	void SetTargetLockRotationMode(bool bEnabled);
+	
 	UFUNCTION()
 	void OnRep_CurrentLockedTarget(AActor* LastLockedTarget);
 
@@ -57,7 +59,6 @@ protected:
 	float RotationSpeed = 5.0f;
 
 private:
-	bool bCachedOrientRotationToMovement;
 	bool bShouldActorRotateTowardsTarget = false;
 	bool bTargetLost = true;
 };
