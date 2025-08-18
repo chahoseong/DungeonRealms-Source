@@ -32,16 +32,6 @@ TArray<FHitResult> UDungeonRealmsAttackTracer::PerformTrace()
 
 		TotalHits.Append(SubHits);
 	}
-
-	for (const TWeakObjectPtr Actor : IgnoreActors)
-	{
-		if (Actor.IsValid())
-		{
-			const bool bIsServer = GetCombatSystem()->GetOwner()->HasAuthority();
-			const FString Label = FString::Printf(TEXT("[%s]"), bIsServer ? TEXT("Server") : TEXT("Client"));
-			UE_LOG(LogTemp, Warning, TEXT("%s Ignore Actor: %s"), *Label, *Actor->GetActorNameOrLabel());	
-		}
-	}
 	
 	TotalHits = FilterBlockedHitsFromObstacle(TotalHits);
 	LastHitboxTransform = HitboxComponent->GetComponentTransform();
