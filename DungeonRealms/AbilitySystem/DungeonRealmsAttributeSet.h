@@ -35,12 +35,15 @@ public:
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Resistance)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxHealth)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxMana)
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxPoise)
 	
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Health)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Mana)
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Poise)
 	
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, IncomingDamage)
-	
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, IncomingImpact)
+
 private:
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
@@ -71,12 +74,18 @@ private:
 
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+
+	UFUNCTION()
+	void OnRep_MaxPoise(const FGameplayAttributeData& OldMaxPoise) const;
 	
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
 	UFUNCTION()
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
+
+	UFUNCTION()
+	void OnRep_Poise(const FGameplayAttributeData& OldPoise) const;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Strength, Category="Primary Attributes")
@@ -108,13 +117,22 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
 	FGameplayAttributeData MaxMana;
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxPoise, Category="Secondary Attributes")
+	FGameplayAttributeData MaxPoise;
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
 	FGameplayAttributeData Mana;
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Poise, Category="Vital Attributes")
+	FGameplayAttributeData Poise;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
 	FGameplayAttributeData IncomingDamage;
+
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
+	FGameplayAttributeData IncomingImpact;
 };

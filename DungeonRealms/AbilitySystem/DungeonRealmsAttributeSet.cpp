@@ -1,5 +1,6 @@
 ﻿#include "AbilitySystem/DungeonRealmsAttributeSet.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "DungeonRealmsGameplayEffectContext.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
@@ -39,6 +40,11 @@ void UDungeonRealmsAttributeSet::PreAttributeChange(const FGameplayAttribute& At
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
 	}
+
+	if (Attribute == GetPoiseAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxPoise());
+	}
 }
 
 void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -64,7 +70,7 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
 			const FGameplayTag EventTag = NewHealth > 0.0f
-										   ? DungeonRealmsGameplayTags::Event_Health_Damaged
+										   ? DungeonRealmsGameplayTags::Event_Damaged
 										   : DungeonRealmsGameplayTags::Event_Dead;
 			FGameplayEventData EventData;
 			EventData.ContextHandle = Data.EffectSpec.GetContext();
@@ -74,8 +80,19 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 				EventTag,
 				EventData
 			);
-
+			
 			UE_LOG(LogTemp, Warning, TEXT("Incoming Damage: %f, Current Health: %f"), IncomingDamageMagnitude, GetHealth());
+		}
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingImpactAttribute())
+	{
+		const float IncomingImpactMagnitude = GetIncomingImpact();
+		SetIncomingImpact(0.0f);
+
+		if (IncomingImpactMagnitude > 0.0f)
+		{
+			const float NewPoise = GetPoise() - IncomingImpactMagnitude;
+			SetPoise(FMath::Clamp(NewPoise, 0.0f, GetMaxPoise()));
 		}
 	}
 }
@@ -130,6 +147,11 @@ void UDungeonRealmsAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& Old
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, MaxMana, OldMaxMana);
 }
 
+void UDungeonRealmsAttributeSet::OnRep_MaxPoise(const FGameplayAttributeData& OldMaxPoise) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, MaxPoise, OldMaxPoise);
+}
+
 void UDungeonRealmsAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, Health, OldHealth);
@@ -138,4 +160,9 @@ void UDungeonRealmsAttributeSet::OnRep_Health(const FGameplayAttributeData& OldH
 void UDungeonRealmsAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, Mana, OldMana);
+}
+
+void UDungeonRealmsAttributeSet::OnRep_Poise(const FGameplayAttributeData& OldPoise) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, Poise, OldPoise);
 }
