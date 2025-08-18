@@ -18,7 +18,7 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Hit, "Event.Attack.Hit")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Left, "Event.SwitchTarget.Left")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Right, "Event.SwitchTarget.Right")
-	UE_DEFINE_GAMEPLAY_TAG(Event_Health_Damaged, "Event.Health.Damaged")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Damaged, "Event.Damaged")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
 
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Strength, "SetByCaller.Attribute.Strength")
@@ -31,6 +31,8 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Resistance, "SetByCaller.Attribute.Resistance")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxHealth, "SetByCaller.Attribute.MaxHealth")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxMana, "SetByCaller.Attribute.MaxMana")
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Poise, "SetByCaller.Attribute.Poise")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_AttackDamage_Coefficient, "SetByCaller.Damage.AttackDamage.Coefficient")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_AbilityPower_Coefficient, "SetByCaller.Damage.AbilityPower.Coefficient")
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_KnockbackPower, "SetByCaller.Damage.KnockbackPower")
 }
