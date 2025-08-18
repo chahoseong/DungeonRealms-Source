@@ -103,6 +103,21 @@ void ADungeonRealmsCharacter::RemoveActiveEffect(const FActiveGameplayEffectHand
 	AbilitySystemComponent->RemoveActiveGameplayEffect(ActiveEffectHandle);
 }
 
+void ADungeonRealmsCharacter::AddAnimMontage(const FGameplayTag& MontageTag, UAnimMontage* AnimMontage)
+{
+	AnimMontages.Add(MontageTag, AnimMontage);
+}
+
+void ADungeonRealmsCharacter::RemoveAnimMontage(const FGameplayTag& MontageTag)
+{
+	AnimMontages.Remove(MontageTag);
+}
+
+UAnimMontage* ADungeonRealmsCharacter::GetAnimMontage(const FGameplayTag& MontageTag) const
+{
+	return AnimMontages.FindRef(MontageTag);
+}
+
 UAbilitySystemComponent* ADungeonRealmsCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

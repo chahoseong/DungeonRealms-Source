@@ -32,6 +32,15 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 	//~End IDungeonRealmsTeamAgentInterface interface
+
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|Character")
+	void AddAnimMontage(const FGameplayTag& MontageTag, UAnimMontage* AnimMontage);
+
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|Character")
+	void RemoveAnimMontage(const FGameplayTag& MontageTag);
+
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|Character")
+	UAnimMontage* GetAnimMontage(const FGameplayTag& MontageTag) const;
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
@@ -61,12 +70,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Replicated)
+	EDungeonRealmsTeam MyTeam = EDungeonRealmsTeam::NoTeam;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DungeonRealms|Abilities")
 	TArray<TSoftObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Replicated)
-	EDungeonRealmsTeam MyTeam = EDungeonRealmsTeam::NoTeam;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DungeonRealms|Animations")
+	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> AnimMontages;
+
 private:
 	FDungeonRealmsAbilitySetGrantedHandles GrantedHandles;
 };
