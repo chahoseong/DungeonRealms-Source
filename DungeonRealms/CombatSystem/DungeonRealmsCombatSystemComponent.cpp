@@ -8,6 +8,7 @@
 #include "Abilities/GameplayAbilityTypes.h"
 #include "Characters/DungeonRealmsCharacter.h"
 #include "DungeonRealmsLogChannels.h"
+#include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
 
 UDungeonRealmsCombatSystemComponent* UDungeonRealmsCombatSystemComponent::FindCombatSystemComponent(const AActor* Actor)
 {
@@ -148,9 +149,16 @@ bool UDungeonRealmsCombatSystemComponent::CanDefendAgainst(const AActor* Attacke
 void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& DamageSpec)
 {
 	UAbilitySystemComponent* OwningAbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+
 	FGameplayEffectContextHandle EffectContext = OwningAbilitySystem->MakeEffectContext();
 	EffectContext.AddSourceObject(DamageSpec.SourceObject.Get());
 	EffectContext.AddInstigator(DamageSpec.Instigator.Get(), DamageSpec.DamageCauser.Get());
+
+	FDungeonRealmsGameplayEffectContext* ExtraEffectContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(EffectContext);
+	ExtraEffectContext->SetDamageImpact(DamageSpec.DamageImpact);
+	ExtraEffectContext->SetKnockbackPower(DamageSpec.KnockbackPower);
+	ExtraEffectContext->SetKnockdown(DamageSpec.bShouldKnockdown);
+	
 	FGameplayEffectSpecHandle EffectSpec = OwningAbilitySystem->MakeOutgoingSpec(DamageSpec.DamageEffect, 1.0f, EffectContext);
 	EffectSpec.Data->SetSetByCallerMagnitude(
 		DungeonRealmsGameplayTags::SetByCaller_Damage_AttackDamage_Coefficient,
@@ -160,5 +168,6 @@ void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& D
 		DungeonRealmsGameplayTags::SetByCaller_Damage_AbilityPower_Coefficient,
 		DamageSpec.AbilityPowerCoefficient
 	);
+	
 	OwningAbilitySystem->ApplyGameplayEffectSpecToSelf(*EffectSpec.Data);
 }

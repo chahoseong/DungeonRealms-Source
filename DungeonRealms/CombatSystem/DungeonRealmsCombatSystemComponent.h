@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-
 #include "DungeonRealmsCombatSystemComponent.generated.h"
 
 class UGameplayEffect;
@@ -25,10 +24,19 @@ struct FDamageSpec
 	TWeakObjectPtr<AActor> DamageCauser;
 
 	UPROPERTY(BlueprintReadWrite)
-	float AttackDamageCoefficient;
+	float AttackDamageCoefficient = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float AbilityPowerCoefficient;
+	float AbilityPowerCoefficient = 0.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DamageImpact = 0.0f;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float KnockbackPower = 0.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bShouldKnockdown = false;
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -44,7 +52,7 @@ public:
 	UDungeonRealmsCombatSystemComponent();
 
 	virtual void BeginPlay() override;
-
+	
 	UFUNCTION(BlueprintCallable)
 	void BeginAttackTrace(FName SocketName);
 
@@ -71,5 +79,5 @@ protected:
 	TSubclassOf<UDungeonRealmsAttackTracer> AttackTracerClass;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UDungeonRealmsAttackTracer> ActiveAttackTracer; 
+	TObjectPtr<UDungeonRealmsAttackTracer> ActiveAttackTracer;
 };
