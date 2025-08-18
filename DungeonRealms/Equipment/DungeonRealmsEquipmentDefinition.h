@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "AttributeSet.h"
 #include "GameplayTagContainer.h"
 #include "UObject/Object.h"
 #include "DungeonRealmsEquipmentDefinition.generated.h"
@@ -38,7 +37,7 @@ struct FEquipmentAttributeBonus
 	FGameplayTag AttributeTag;
 
 	UPROPERTY(EditDefaultsOnly)
-	float Magnitude;
+	float Magnitude = 0.0f;
 };
 
 UCLASS(Abstract, Const, Blueprintable, BlueprintType)

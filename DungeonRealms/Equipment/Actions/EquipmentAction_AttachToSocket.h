@@ -19,7 +19,7 @@ struct FDungeonRealmsEquipmentActorToSpawn
 	FTransform AttachTransform;
 };
 
-UCLASS(DisplayName="AttachToSocket")
+UCLASS(DisplayName="Attach To Socket")
 class DUNGEONREALMS_API UEquipmentAction_AttachToSocket : public UDungeonRealmsEquipmentAction
 {
 	GENERATED_BODY()

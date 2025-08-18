@@ -30,6 +30,12 @@ public:
 	void DestroyEquipmentActors();
 	
 	APawn* GetPawn() const;
+
+	template <typename T>
+	T* GetPawn() const requires(std::is_base_of_v<APawn, T>)
+	{
+		return Cast<T>(GetPawn());
+	}
 	
 	bool HasAuthority() const;
 	bool IsLocallyControlled() const;

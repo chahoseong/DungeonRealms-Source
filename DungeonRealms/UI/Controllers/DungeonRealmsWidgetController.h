@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/Object.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "DungeonRealmsWidgetController.generated.h"
 
 UCLASS()

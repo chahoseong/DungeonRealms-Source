@@ -84,12 +84,10 @@ void UDungeonRealmsWeaponInstance::OnUnequipped()
 	{
 		RemoveInputMappingContext(WeaponDefinition->InputMappingContext);
 	}
-
 	if (bAnimClassLayersLinked)
 	{
 		UnlinkAnimClassLayers(WeaponDefinition->AnimClassLayers);
 	}
-
 	if (GrantedHandles.Num() > 0)
 	{
 		TakeAbilitySetsFromOwner();

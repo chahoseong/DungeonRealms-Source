@@ -3,10 +3,10 @@
 #include "ActiveGameplayEffectHandle.h"
 #include "Components/ActorComponent.h"
 #include "Equipment/DungeonRealmsEquipmentList.h"
+#include "Equipment/DungeonRealmsEquipmentDefinition.h"
 #include "DungeonRealmsEquipmentManagerComponent.generated.h"
 
 class UGameplayEffect;
-struct FDungeonRealmsEquipmentId;
 struct FGameplayTag;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
