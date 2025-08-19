@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "CoreMinimal.h"
 #include "Equipment/DungeonRealmsEquipmentActor.h"
 #include "DungeonRealmsWeaponActor.generated.h"
 

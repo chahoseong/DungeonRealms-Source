@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "FDungeonRealmsAttackTracer.h"
 #include "DungeonRealmsCombatSystemComponent.generated.h"
 
 class UGameplayEffect;
-class UDungeonRealmsAttackTracer;
+class FDungeonRealmsAttackTracer;
 
 USTRUCT(BlueprintType)
 struct FDamageSpec
@@ -79,12 +80,18 @@ private:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
-	TSubclassOf<UDungeonRealmsAttackTracer> AttackTracerClass;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UDungeonRealmsAttackTracer> ActiveAttackTracer;
+	TArray<TEnumAsByte<EObjectTypeQuery>> AttackTraceObjectTypes;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	int32 AttackTraceSubsteps = 2;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	bool bDrawDebugAttackTrace = false;
 
 private:
+	FDungeonRealmsAttackTracer AttackTracer;
+	TWeakObjectPtr<AActor> AttackTraceSourceActor;
+	
 	float DefenseDegrees = 0.0f;
 	bool bIsGuarding = false;
 };

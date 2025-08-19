@@ -1,6 +1,6 @@
 ﻿#include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
-#include "CombatSystem/DungeonRealmsAttackTracer.h"
+#include "CombatSystem/FDungeonRealmsAttackTracer.h"
 #include "CombatSystem/DungeonRealmsCombatSystemInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -20,8 +20,7 @@ UDungeonRealmsCombatSystemComponent* UDungeonRealmsCombatSystemComponent::FindCo
 			return CombatSystemInterface->GetCombatSystemComponent();	
 		}
 		
-		UDungeonRealmsCombatSystemComponent* CombatSystemComponent = Actor->FindComponentByClass<UDungeonRealmsCombatSystemComponent>();
-		if (IsValid(CombatSystemComponent))
+		if (UDungeonRealmsCombatSystemComponent* CombatSystemComponent = Actor->FindComponentByClass<UDungeonRealmsCombatSystemComponent>())
 		{
 			return CombatSystemComponent;
 		}
@@ -37,23 +36,26 @@ UDungeonRealmsCombatSystemComponent::UDungeonRealmsCombatSystemComponent()
 void UDungeonRealmsCombatSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	ActiveAttackTracer = NewObject<UDungeonRealmsAttackTracer>(this, AttackTracerClass);
 }
 
 void UDungeonRealmsCombatSystemComponent::BeginAttackTrace(FName SocketName)
 {
 	ADungeonRealmsCharacter* OwningCharacter = GetOwner<ADungeonRealmsCharacter>();
-	AActor* AttachedActor = OwningCharacter->GetAttachedActorFromSocket(SocketName);
-	if (IsValid(AttachedActor))
+	AttackTraceSourceActor = OwningCharacter->GetAttachedActorFromSocket(SocketName);
+	if (AttackTraceSourceActor.IsValid())
 	{
-		UPrimitiveComponent* HitboxComponent = AttachedActor->FindComponentByTag<UPrimitiveComponent>(FName("Hitbox"));
-		if (IsValid(HitboxComponent))
+		if (UPrimitiveComponent* HitboxComponent =
+			AttackTraceSourceActor->FindComponentByTag<UPrimitiveComponent>(FName("Hitbox")))
 		{
-			ActiveAttackTracer->BeginTrace(HitboxComponent);
+			AttackTracer.BeginTrace(
+				HitboxComponent,
+				AttackTraceObjectTypes,
+				{ GetOwner(), AttackTraceSourceActor.Get() }
+			);
 		}
 		else
 		{
-			UE_LOG(LogDungeonRealms, Error, TEXT("%s actor doesn't have component with hitbox tag."), *AttachedActor->GetActorNameOrLabel());
+			UE_LOG(LogDungeonRealms, Error, TEXT("%s actor doesn't have component with hitbox tag."), *AttackTraceSourceActor->GetActorNameOrLabel());
 		}
 	}
 	else
@@ -64,11 +66,17 @@ void UDungeonRealmsCombatSystemComponent::BeginAttackTrace(FName SocketName)
 
 void UDungeonRealmsCombatSystemComponent::PerformAttackTrace()
 {
-	if (UDungeonRealmsCombatStatics::HasObstacleBetween(GetOwner(), ActiveAttackTracer->GetSourceActor()))
+	if (!AttackTraceSourceActor.IsValid())
 	{
 		return;
 	}
-	const TArray<FHitResult> Hits = ActiveAttackTracer->PerformTrace();
+	
+	if (UDungeonRealmsCombatStatics::HasObstacleBetween(GetOwner(), AttackTraceSourceActor.Get()))
+	{
+		return;
+	}
+	const TArray<FHitResult> Hits =
+		AttackTracer.PerformTrace(AttackTraceSubsteps, bDrawDebugAttackTrace);
 	const TArray<FHitResult> HostileTargets = FilterToHostileTargets(Hits);
 	ApplyHitEvents(HostileTargets);
 }
@@ -109,6 +117,7 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 				break;
 			}
 		}
+		
 		HitTargets.Add(HitActor);
 	}
 
@@ -129,7 +138,7 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 
 void UDungeonRealmsCombatSystemComponent::EndAttackTrace()
 {
-	ActiveAttackTracer->EndTrace();
+	AttackTracer.EndTrace();
 }
 
 void UDungeonRealmsCombatSystemComponent::BeginGuard(float InDefenseDegrees)
