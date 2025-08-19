@@ -20,6 +20,8 @@ public:
 	ADungeonRealmsPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+
+	void SetPlayerIndex(int32 NewPlayerIndex);
 	
 	//~Begin IGenericTeamAgentInterface interface
 	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;

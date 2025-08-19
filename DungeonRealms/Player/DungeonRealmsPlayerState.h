@@ -16,6 +16,11 @@ class DUNGEONREALMS_API ADungeonRealmsPlayerState : public APlayerState, public 
 public:
 	ADungeonRealmsPlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	void SetPlayerIndex(int32 NewPlayerIndex);
+	int32 GetPlayerIndex() const;
+	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	template <typename T>
@@ -38,4 +43,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(Replicated)
+	int32 PlayerIndex = -1;
 };

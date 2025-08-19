@@ -4,6 +4,7 @@
 #include "Characters/DungeonRealmsPlayerCharacter.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "DungeonRealmsLogChannels.h"
+#include "DungeonRealmsPlayerState.h"
 #include "EnhancedInputSubsystems.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "GameFramework/PlayerState.h"
@@ -117,6 +118,14 @@ void ADungeonRealmsPlayerController::PostProcessInput(const float DeltaTime, con
 	}
 	
 	Super::PostProcessInput(DeltaTime, bGamePaused);
+}
+
+void ADungeonRealmsPlayerController::SetPlayerIndex(int32 NewPlayerIndex)
+{
+	if (ADungeonRealmsPlayerState* DungeonRealmsPlayerState = GetPlayerState<ADungeonRealmsPlayerState>())
+	{
+		DungeonRealmsPlayerState->SetPlayerIndex(NewPlayerIndex);
+	}
 }
 
 void ADungeonRealmsPlayerController::OnRep_PlayerState()
