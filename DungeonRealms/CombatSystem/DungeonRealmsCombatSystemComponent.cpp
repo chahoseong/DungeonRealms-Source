@@ -4,11 +4,12 @@
 #include "CombatSystem/DungeonRealmsCombatSystemInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "DungeonRealmsGameplayTags.h"
 #include "Abilities/GameplayAbilityTypes.h"
-#include "Characters/DungeonRealmsCharacter.h"
-#include "DungeonRealmsLogChannels.h"
 #include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
+#include "Characters/DungeonRealmsCharacter.h"
+#include "DungeonRealmsGameplayTags.h"
+#include "DungeonRealmsLogChannels.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UDungeonRealmsCombatSystemComponent* UDungeonRealmsCombatSystemComponent::FindCombatSystemComponent(const AActor* Actor)
 {
@@ -93,20 +94,20 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 	for (const FHitResult& Hit : Hits)
 	{
 		AActor* HitActor = Hit.GetActor();
-		const UDungeonRealmsCombatSystemComponent* TargetCombatSystem =
-			FindCombatSystemComponent(HitActor);
-		if (IsValid(TargetCombatSystem); TargetCombatSystem->IsGuarding())
+		if (const UDungeonRealmsCombatSystemComponent* TargetCombatSystem =
+			FindCombatSystemComponent(HitActor))
 		{
-			FGameplayEventData HitEventData;
-			HitEventData.Instigator = GetOwner();
-			FGameplayAbilityTargetData_SingleTargetHit* HitTargetData = new FGameplayAbilityTargetData_SingleTargetHit(Hit);
-			HitEventData.TargetData = FGameplayAbilityTargetDataHandle(HitTargetData);
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-				HitActor,
-				DungeonRealmsGameplayTags::Event_Attack_Hit,
-				HitEventData
-			);
-			break;
+			if (TargetCombatSystem->CanDefendAgainst(this))
+			{
+				FGameplayEventData HitEventData;
+				HitEventData.Instigator = GetOwner();
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+					HitActor,
+					DungeonRealmsGameplayTags::Event_Guard_Hit,
+					HitEventData
+				);
+				break;
+			}
 		}
 		HitTargets.Add(HitActor);
 	}
@@ -126,24 +127,32 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 	}
 }
 
-bool UDungeonRealmsCombatSystemComponent::IsGuarding() const
-{
-	UAbilitySystemComponent* AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	return IsValid(AbilitySystem) ? AbilitySystem->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Guarding) : false;
-}
-
 void UDungeonRealmsCombatSystemComponent::EndAttackTrace()
 {
 	ActiveAttackTracer->EndTrace();
 }
 
-bool UDungeonRealmsCombatSystemComponent::CanDefendAgainst(const AActor* Attacker, float DefenseDegrees) const
+void UDungeonRealmsCombatSystemComponent::BeginGuard(float InDefenseDegrees)
 {
+	DefenseDegrees = InDefenseDegrees;
+	bIsGuarding = true;
+}
+
+void UDungeonRealmsCombatSystemComponent::EndGuard()
+{
+	bIsGuarding = false;
+}
+
+bool UDungeonRealmsCombatSystemComponent::CanDefendAgainst(const UDungeonRealmsCombatSystemComponent* Attacker) const
+{
+	if (!bIsGuarding)
+	{
+		return false;
+	}
 	const AActor* OwningActor = GetOwner();
-	FVector ToAttacker = Attacker->GetActorLocation() - OwningActor->GetActorLocation();
-	ToAttacker.Z = 0.0f;
-	float DotResult = OwningActor->GetActorForwardVector().Dot(ToAttacker.GetSafeNormal());
-	return FMath::Acos(DotResult) <= DefenseDegrees;
+	const FVector ToAttacker = Attacker->GetOwner()->GetActorLocation() - OwningActor->GetActorLocation();
+	const float DotResult = OwningActor->GetActorForwardVector().Dot(ToAttacker.GetSafeNormal2D());
+	return UKismetMathLibrary::DegAcos(DotResult) <= DefenseDegrees;
 }
 
 void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& DamageSpec)

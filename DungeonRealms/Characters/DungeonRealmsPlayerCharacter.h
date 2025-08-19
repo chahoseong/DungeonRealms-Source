@@ -18,7 +18,7 @@ class DUNGEONREALMS_API ADungeonRealmsPlayerCharacter : public ADungeonRealmsCha
 
 public:
 	ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	
 	//~Begin APawn interface
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
@@ -47,4 +47,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Equipment")
 	TArray<TSubclassOf<UDungeonRealmsEquipmentDefinition>> StartupEquipments;
+
+	UPROPERTY(EditDefaultsOnly, Category="DungeonRealms|Character")
+	TArray<TObjectPtr<UMaterialInstance>> CharacterMaterials;
 };

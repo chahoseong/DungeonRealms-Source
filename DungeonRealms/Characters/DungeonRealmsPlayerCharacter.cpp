@@ -33,6 +33,9 @@ void ADungeonRealmsPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitializeAbilitySystem();
+
+	ADungeonRealmsPlayerState* DungeonRealmsPlayerState = GetPlayerStateChecked<ADungeonRealmsPlayerState>();
+	GetMesh()->SetMaterial(0, CharacterMaterials[DungeonRealmsPlayerState->GetPlayerIndex()]);
 }
 
 void ADungeonRealmsPlayerCharacter::InitializeAbilitySystem()

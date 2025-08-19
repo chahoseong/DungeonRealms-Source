@@ -16,6 +16,7 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_SwitchTarget, "Input.Action.SwitchTarget")
 
 	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Hit, "Event.Attack.Hit")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Guard_Hit, "Event.Guard.Hit")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Left, "Event.SwitchTarget.Left")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Right, "Event.SwitchTarget.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Damaged, "Event.Damaged")

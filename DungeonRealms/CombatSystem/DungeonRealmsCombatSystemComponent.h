@@ -62,13 +62,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndAttackTrace();
 
-	UFUNCTION(BlueprintPure)
-	bool CanDefendAgainst(const AActor* Attacker, float DefenseDegrees) const;
+	UFUNCTION(BlueprintCallable)
+	void BeginGuard(float InDefenseDegrees);
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyDamageEffect(const FDamageSpec& DamageSpec);
+	void EndGuard();
+
+	bool CanDefendAgainst(const UDungeonRealmsCombatSystemComponent* Attacker) const;
 	
-	bool IsGuarding() const;
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageEffect(const FDamageSpec& DamageSpec);
 
 private:
 	TArray<FHitResult> FilterToHostileTargets(const TArray<FHitResult>& Hits) const;
@@ -80,4 +83,8 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UDungeonRealmsAttackTracer> ActiveAttackTracer;
+
+private:
+	float DefenseDegrees = 0.0f;
+	bool bIsGuarding = false;
 };
