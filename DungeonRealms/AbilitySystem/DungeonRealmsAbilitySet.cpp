@@ -2,7 +2,7 @@
 #include "AbilitySystemComponent.h"
 #include "DungeonRealmsLogChannels.h"
 
-void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
+void FDungeonRealmsAbilitySet_GrantedHandles::AddGameplayAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
 {
 	if (Handle.IsValid())
 	{
@@ -10,7 +10,7 @@ void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayAbilitySpecHandle(const 
 	}
 }
 
-void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
+void FDungeonRealmsAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
 {
 	if (Handle.IsValid())
 	{
@@ -18,7 +18,7 @@ void FDungeonRealmsAbilitySetGrantedHandles::AddGameplayEffectHandle(const FActi
 	}
 }
 
-void FDungeonRealmsAbilitySetGrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem)
+void FDungeonRealmsAbilitySet_GrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem)
 {
 	check(TargetAbilitySystem);
 
@@ -54,7 +54,7 @@ UDungeonRealmsAbilitySet::UDungeonRealmsAbilitySet(const FObjectInitializer& Obj
 }
 
 void UDungeonRealmsAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* TargetAbilitySystem,
-	FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const
+	FDungeonRealmsAbilitySet_GrantedHandles& OutHandles) const
 {
 	GiveToAbilitySystem(TargetAbilitySystem, nullptr, OutHandles);
 }
@@ -62,7 +62,7 @@ void UDungeonRealmsAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* Targ
 void UDungeonRealmsAbilitySet::GiveToAbilitySystem(
 	UAbilitySystemComponent* TargetAbilitySystem,
 	UObject* SourceObject,
-	FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const
+	FDungeonRealmsAbilitySet_GrantedHandles& OutHandles) const
 {
 	check(TargetAbilitySystem);
 	
@@ -71,13 +71,13 @@ void UDungeonRealmsAbilitySet::GiveToAbilitySystem(
 		return;
 	}
 
-	// Grant the gameplay abilities.
-	for (int32 Index = 0; Index < GrantedGameplayAbilities.Num(); ++Index)
+	// Grant the active abilities.
+	for (int32 Index = 0; Index < ActiveAbilities.Num(); ++Index)
 	{
-		const FGameplayAbilityToGrant& AbilityToGrant = GrantedGameplayAbilities[Index];
+		const FDungeonRealmsAbilitySet_ActiveGameplayAbility& AbilityToGrant = ActiveAbilities[Index];
 		if (!IsValid(AbilityToGrant.Ability))
 		{
-			UE_LOG(LogDungeonRealms, Error, TEXT("GrantedGameplayAbilities[%d] on ability set [%s] is not valid."), Index, *GetNameSafe(this));
+			UE_LOG(LogDungeonRealms, Error, TEXT("ActiveAbilities[%d] on ability set [%s] is not valid."), Index, *GetNameSafe(this));
 			continue;
 		}
 		UGameplayAbility* AbilityDefault = AbilityToGrant.Ability->GetDefaultObject<UGameplayAbility>();
@@ -88,13 +88,29 @@ void UDungeonRealmsAbilitySet::GiveToAbilitySystem(
 		OutHandles.AddGameplayAbilitySpecHandle(Handle);
 	}
 
-	// Apply the gameplay effects.
-	for (int32 Index = 0; Index < AppliedGameplayEffects.Num(); ++Index)
+	// Grant the reactive abilities.
+	for (int32 Index = 0; Index < ReactiveAbilities.Num(); ++Index)
 	{
-		const FGameplayEffectToApply& EffectToApply = AppliedGameplayEffects[Index];
+		const FDungeonRealmsAbilitySet_ReactiveGameplayAbility& AbilityToGrant = ReactiveAbilities[Index];
+		if (!IsValid(AbilityToGrant.Ability))
+		{
+			UE_LOG(LogDungeonRealms, Error, TEXT("ReactiveAbilities[%d] on ability set [%s] is not valid."), Index, *GetNameSafe(this));
+			continue;
+		}
+		UGameplayAbility* AbilityDefault = AbilityToGrant.Ability->GetDefaultObject<UGameplayAbility>();
+		FGameplayAbilitySpec AbilitySpec(AbilityDefault, AbilityToGrant.Level);
+		AbilitySpec.SourceObject = SourceObject;
+		const FGameplayAbilitySpecHandle Handle = TargetAbilitySystem->GiveAbility(AbilitySpec);
+		OutHandles.AddGameplayAbilitySpecHandle(Handle);
+	}
+
+	// Apply the gameplay effects.
+	for (int32 Index = 0; Index < GameplayEffects.Num(); ++Index)
+	{
+		const FDungeonRealmsAbilitySet_GameplayEffect& EffectToApply = GameplayEffects[Index];
 		if (!IsValid(EffectToApply.Effect))
 		{
-			UE_LOG(LogDungeonRealms, Error, TEXT("GrantedGameplayEffects[%d] on ability set [%s] is not valid"), Index, *GetNameSafe(this));
+			UE_LOG(LogDungeonRealms, Error, TEXT("GameplayEffects[%d] on ability set [%s] is not valid"), Index, *GetNameSafe(this));
 			continue;
 		}
 		const UGameplayEffect* EffectDefault = EffectToApply.Effect->GetDefaultObject<UGameplayEffect>();

@@ -27,7 +27,7 @@ private:
 	void TakeAbilitySetsFromOwner();
 
 private:
-	FDungeonRealmsAbilitySetGrantedHandles GrantedHandles;
+	FDungeonRealmsAbilitySet_GrantedHandles GrantedHandles;
 	bool bInputMappingContextAdded = false;
 	bool bAnimClassLayersLinked = false;
 };

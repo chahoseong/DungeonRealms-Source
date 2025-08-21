@@ -148,14 +148,9 @@ void ADungeonRealmsEnemyCharacter::BroadcastInitialAttributes() const
 void ADungeonRealmsEnemyCharacter::InitializeWeapons()
 {
 	USceneComponent* AttachTarget = GetMesh();
-	
 	if (bUseRetargetMesh)
 	{
 		AttachTarget = RetargetMeshComponent;
-	}
-	else
-	{
-		AttachTarget = GetMesh();
 	}
 	
 	for (const FEnemyWeaponToSpawn& WeaponToSpawn : WeaponActorsToSpawn)

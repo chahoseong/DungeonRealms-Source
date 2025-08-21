@@ -80,5 +80,5 @@ protected:
 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> AnimMontages;
 
 private:
-	FDungeonRealmsAbilitySetGrantedHandles GrantedHandles;
+	FDungeonRealmsAbilitySet_GrantedHandles GrantedHandles;
 };

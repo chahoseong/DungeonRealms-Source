@@ -12,7 +12,7 @@ struct FActiveGameplayEffectHandle;
 struct FGameplayAbilitySpecHandle;
 
 USTRUCT(BlueprintType)
-struct FGameplayAbilityToGrant
+struct FDungeonRealmsAbilitySet_ActiveGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -21,17 +21,28 @@ struct FGameplayAbilityToGrant
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 Level = 1;
-
+	
 	UPROPERTY(EditDefaultsOnly, meta=(Categories="Input"))
 	FGameplayTag InputTag;
 };
 
 USTRUCT(BlueprintType)
-struct FGameplayEffectToApply
+struct FDungeonRealmsAbilitySet_ReactiveGameplayAbility
 {
 	GENERATED_BODY()
 
-public:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayAbility> Ability;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 Level = 1;
+};
+
+USTRUCT(BlueprintType)
+struct FDungeonRealmsAbilitySet_GameplayEffect
+{
+	GENERATED_BODY()
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> Effect;
 
@@ -40,7 +51,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FDungeonRealmsAbilitySetGrantedHandles
+struct FDungeonRealmsAbilitySet_GrantedHandles
 {
 	GENERATED_BODY()
 
@@ -69,16 +80,19 @@ public:
 	UDungeonRealmsAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void GiveToAbilitySystem(UAbilitySystemComponent* AbilitySystem,
-		FDungeonRealmsAbilitySetGrantedHandles& OutHandles) const;
+		FDungeonRealmsAbilitySet_GrantedHandles& OutHandles) const;
 	void GiveToAbilitySystem(UAbilitySystemComponent* AbilitySystem,
 		UObject* SourceObject,
-		FDungeonRealmsAbilitySetGrantedHandles& OutHandles
+		FDungeonRealmsAbilitySet_GrantedHandles& OutHandles
 	) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty=Ability))
-	TArray<FGameplayAbilityToGrant> GrantedGameplayAbilities;
+	TArray<FDungeonRealmsAbilitySet_ActiveGameplayAbility> ActiveAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty=Ability))
+	TArray<FDungeonRealmsAbilitySet_ReactiveGameplayAbility> ReactiveAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effects", meta=(TitleProperty=Effect))
-	TArray<FGameplayEffectToApply> AppliedGameplayEffects;
+	TArray<FDungeonRealmsAbilitySet_GameplayEffect> GameplayEffects;
 };
