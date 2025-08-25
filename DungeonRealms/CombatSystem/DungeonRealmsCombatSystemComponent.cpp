@@ -109,6 +109,8 @@ void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult
 			{
 				FGameplayEventData HitEventData;
 				HitEventData.Instigator = GetOwner();
+				FGameplayAbilityTargetData* TargetData = new FGameplayAbilityTargetData_SingleTargetHit(Hit);
+				HitEventData.TargetData = FGameplayAbilityTargetDataHandle(TargetData);
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 					HitActor,
 					DungeonRealmsGameplayTags::Event_Guard_Hit,
