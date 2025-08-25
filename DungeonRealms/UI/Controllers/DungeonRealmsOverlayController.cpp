@@ -24,6 +24,20 @@ void UDungeonRealmsOverlayController::Initialize(APlayerController* NewPlayerCon
 	{
 		OnMaxHealthChanged.Broadcast(Data.NewValue);
 	});
+
+	// Broadcast stamina changed
+	DungeonRealmsAbilitySystem->GetGameplayAttributeValueChangeDelegate(UDungeonRealmsAttributeSet::GetStaminaAttribute())
+	.AddLambda([this](const FOnAttributeChangeData& Data)
+	{
+		OnStaminaChanged.Broadcast(Data.NewValue);
+	});
+
+	// Broadcast stamina changed
+	DungeonRealmsAbilitySystem->GetGameplayAttributeValueChangeDelegate(UDungeonRealmsAttributeSet::GetMaxStaminaAttribute())
+	.AddLambda([this](const FOnAttributeChangeData& Data)
+	{
+		OnMaxStaminaChanged.Broadcast(Data.NewValue);
+	});
 	
 	// Broadcast mana changed
 	DungeonRealmsAbilitySystem->GetGameplayAttributeValueChangeDelegate(UDungeonRealmsAttributeSet::GetManaAttribute())
@@ -46,6 +60,8 @@ void UDungeonRealmsOverlayController::BroadcastInitialValues() const
 	{
 		OnHealthChanged.Broadcast(DungeonRealmsAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(DungeonRealmsAttributeSet->GetMaxHealth());
+		OnStaminaChanged.Broadcast(DungeonRealmsAttributeSet->GetStamina());
+		OnMaxStaminaChanged.Broadcast(DungeonRealmsAttributeSet->GetMaxStamina());
 		OnManaChanged.Broadcast(DungeonRealmsAttributeSet->GetMana());
 		OnMaxManaChanged.Broadcast(DungeonRealmsAttributeSet->GetMaxMana());
 	}

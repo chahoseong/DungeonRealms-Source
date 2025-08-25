@@ -34,13 +34,16 @@ public:
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Armor)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Resistance)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxHealth)
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxStamina)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxMana)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, MaxPoise)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, HealthRegeneration)
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, StaminaRegeneration)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, ManaRegeneration)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, PoiseRegeneration)
 	
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Health)
+	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Stamina)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Mana)
 	ATTRIBUTE_ACCESSORS(UDungeonRealmsAttributeSet, Poise)
 	
@@ -75,6 +78,9 @@ private:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION()
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+	
+	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 
 	UFUNCTION()
@@ -84,6 +90,9 @@ private:
 	void OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const;
 
 	UFUNCTION()
+	void OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const;
+	
+	UFUNCTION()
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
 
 	UFUNCTION()
@@ -91,6 +100,9 @@ private:
 	
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
+	
+	UFUNCTION()
+    void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
 
 	UFUNCTION()
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
@@ -126,6 +138,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxStamina, Category="Secondary Attributes")
+	FGameplayAttributeData MaxStamina;
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
 	FGameplayAttributeData MaxMana;
 
@@ -135,19 +150,25 @@ protected:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HealthRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData HealthRegeneration;
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_StaminaRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData StaminaRegeneration;
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ManaRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData ManaRegeneration;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PoiseRegeneration, Category="Secondary Attributes")
 	FGameplayAttributeData PoiseRegeneration;
 	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Resource Attributes")
 	FGameplayAttributeData Health;
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stamina, Category="Resource Attributes")
+    FGameplayAttributeData Stamina;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Resource Attributes")
 	FGameplayAttributeData Mana;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Poise, Category="Vital Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Poise, Category="Resource Attributes")
 	FGameplayAttributeData Poise;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")

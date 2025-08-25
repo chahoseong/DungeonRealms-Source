@@ -31,6 +31,7 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Armor, "SetByCaller.Attribute.Armor")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Resistance, "SetByCaller.Attribute.Resistance")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxHealth, "SetByCaller.Attribute.MaxHealth")
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxStamina, "SetByCaller.Attribute.MaxStamina")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxMana, "SetByCaller.Attribute.MaxMana")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Poise, "SetByCaller.Attribute.Poise")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_AttackDamage_Coefficient, "SetByCaller.Damage.AttackDamage.Coefficient")

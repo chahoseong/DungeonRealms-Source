@@ -17,16 +17,22 @@ public:
 	virtual void Initialize(APlayerController* NewPlayerController) override;
 	virtual void BroadcastInitialValues() const override;
 	
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
 	FAttributeChangedSignature OnHealthChanged;
 
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
 	FAttributeChangedSignature OnMaxHealthChanged;
 
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
+	FAttributeChangedSignature OnStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
+	FAttributeChangedSignature OnMaxStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
 	FAttributeChangedSignature OnManaChanged;
 
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	UPROPERTY(BlueprintAssignable, Category="Resource Attributes")
 	FAttributeChangedSignature OnMaxManaChanged;
 	
 private:

@@ -1,6 +1,6 @@
 ﻿#include "AbilitySystem/DungeonRealmsAttributeSet.h"
+#include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "DungeonRealmsGameplayEffectContext.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
@@ -22,12 +22,15 @@ void UDungeonRealmsAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Armor, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Resistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, MaxPoise, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, StaminaRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, PoiseRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDungeonRealmsAttributeSet, Poise, COND_None, REPNOTIFY_Always);
 }
@@ -41,6 +44,11 @@ void UDungeonRealmsAttributeSet::PreAttributeChange(const FGameplayAttribute& At
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
 	}
 
+	if (Attribute == GetStaminaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxStamina());
+	}
+	
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
@@ -59,6 +67,10 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -144,6 +156,11 @@ void UDungeonRealmsAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& O
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, MaxHealth, OldMaxHealth);
 }
 
+void UDungeonRealmsAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStaminaHealth) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, MaxStamina, OldMaxStaminaHealth);
+}
+
 void UDungeonRealmsAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, MaxMana, OldMaxMana);
@@ -159,6 +176,11 @@ void UDungeonRealmsAttributeSet::OnRep_HealthRegeneration(const FGameplayAttribu
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, HealthRegeneration, OldHealthRegeneration);
 }
 
+void UDungeonRealmsAttributeSet::OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, StaminaRegeneration, OldStaminaRegeneration);
+}
+
 void UDungeonRealmsAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, ManaRegeneration, OldManaRegeneration);
@@ -172,6 +194,11 @@ void UDungeonRealmsAttributeSet::OnRep_PoiseRegeneration(const FGameplayAttribut
 void UDungeonRealmsAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, Health, OldHealth);
+}
+
+void UDungeonRealmsAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDungeonRealmsAttributeSet, Stamina, OldStamina);
 }
 
 void UDungeonRealmsAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const

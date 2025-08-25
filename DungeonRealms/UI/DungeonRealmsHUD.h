@@ -15,14 +15,15 @@ class DUNGEONREALMS_API ADungeonRealmsHUD : public AHUD
 public:
 	void InitOverlay();
 	UDungeonRealmsOverlayController* GetOverlayController() const;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UDungeonRealmsUserWidget> ActiveOverlayWidget;
 	
 private:
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UDungeonRealmsUserWidget> OverlayWidgetClass;
-
-	UPROPERTY()
-	TObjectPtr<UDungeonRealmsUserWidget> ActiveOverlayWidget;
-
+	
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UDungeonRealmsOverlayController> OverlayControllerClass;
 
