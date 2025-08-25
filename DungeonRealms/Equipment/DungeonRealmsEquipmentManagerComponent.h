@@ -21,7 +21,7 @@ public:
 	UDungeonRealmsEquipmentInstance* Equip(TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
-	void Unequip(UDungeonRealmsEquipmentInstance* EquipmentInstance);
+	void Unequip(UDungeonRealmsEquipmentInstance* EquipmentInstance, bool bForReplacement = false);
 
 	UFUNCTION(BlueprintCallable)
 	UDungeonRealmsEquipmentInstance* GetEquipmentBySlot(const FGameplayTag& SlotTag);
@@ -48,6 +48,9 @@ private:
 protected:
 	UPROPERTY(Replicated)
 	FDungeonRealmsEquipmentList EquipmentList;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FGameplayTag, TSubclassOf<UDungeonRealmsEquipmentDefinition>> DefaultEquipments;
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> EquipEffectClass;

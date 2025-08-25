@@ -38,7 +38,7 @@ UDungeonRealmsEquipmentInstance* UDungeonRealmsEquipmentManagerComponent::Equip(
 	return Result;
 }
 
-void UDungeonRealmsEquipmentManagerComponent::Unequip(UDungeonRealmsEquipmentInstance* EquipmentInstance)
+void UDungeonRealmsEquipmentManagerComponent::Unequip(UDungeonRealmsEquipmentInstance* EquipmentInstance, bool bForReplacement)
 {
 	if (!IsValid(EquipmentInstance))
 	{
@@ -52,6 +52,17 @@ void UDungeonRealmsEquipmentManagerComponent::Unequip(UDungeonRealmsEquipmentIns
 	}
 	EquipmentInstance->OnUnequipped();
 	EquipmentList.RemoveEntry(EquipmentInstance);
+
+	if (!bForReplacement)
+	{
+		for (const FGameplayTag& SlotTag : EquipmentInstance->GetSlotTags())
+		{
+			if (const TSubclassOf DefaultEquipment = DefaultEquipments.FindRef(SlotTag))
+			{
+				Equip(DefaultEquipment);
+			}
+		}
+	}
 }
 
 UDungeonRealmsEquipmentInstance* UDungeonRealmsEquipmentManagerComponent::GetEquipmentBySlot(

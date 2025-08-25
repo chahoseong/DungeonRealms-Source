@@ -22,7 +22,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	TSubclassOf<UAnimInstance> AnimClassLayers;
-	
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	TArray<TObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 };

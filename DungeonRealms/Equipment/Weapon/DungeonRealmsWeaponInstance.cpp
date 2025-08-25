@@ -20,10 +20,6 @@ void UDungeonRealmsWeaponInstance::OnEquipped()
 	{
 		LinkAnimClassLayers(WeaponDefinition->AnimClassLayers);
 	}
-	if (HasAuthority() && WeaponDefinition->AbilitySets.Num() > 0)
-	{
-		GiveAbilitySetsToOwner(WeaponDefinition->AbilitySets);
-	}
 }
 
 void UDungeonRealmsWeaponInstance::AddInputMappingContext(const UInputMappingContext* InputMappingContext, int32 Priority)
@@ -53,29 +49,6 @@ void UDungeonRealmsWeaponInstance::LinkAnimClassLayers(TSubclassOf<UAnimInstance
 	}
 }
 
-void UDungeonRealmsWeaponInstance::GiveAbilitySetsToOwner(const TArray<UDungeonRealmsAbilitySet*>& AbilitySets)
-{
-	UAbilitySystemComponent* OwningAbilitySystem =
-			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
-	if (!IsValid(OwningAbilitySystem))
-	{
-		return;
-	}
-		
-	for (const UDungeonRealmsAbilitySet* AbilitySet : AbilitySets)
-	{
-		if (!IsValid(AbilitySet))
-		{
-			continue;
-		}
-		AbilitySet->GiveToAbilitySystem(
-			OwningAbilitySystem,
-			this,
-			GrantedHandles
-		);
-	}
-}
-
 void UDungeonRealmsWeaponInstance::OnUnequipped()
 {
 	const UDungeonRealmsWeaponDefinition* WeaponDefinition = GetDefault<UDungeonRealmsWeaponDefinition>(GetEquipmentDefinition());
@@ -87,10 +60,6 @@ void UDungeonRealmsWeaponInstance::OnUnequipped()
 	if (bAnimClassLayersLinked)
 	{
 		UnlinkAnimClassLayers(WeaponDefinition->AnimClassLayers);
-	}
-	if (GrantedHandles.Num() > 0)
-	{
-		TakeAbilitySetsFromOwner();
 	}
 	
 	Super::OnUnequipped();
@@ -121,15 +90,5 @@ void UDungeonRealmsWeaponInstance::UnlinkAnimClassLayers(TSubclassOf<UAnimInstan
 	{
 		OwningCharacter->GetMesh()->UnlinkAnimClassLayers(AnimClassLayers);
 		bAnimClassLayersLinked = false;
-	}
-}
-
-void UDungeonRealmsWeaponInstance::TakeAbilitySetsFromOwner()
-{
-	UAbilitySystemComponent* AbilitySystemComponent =
-		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
-	if (IsValid(AbilitySystemComponent))
-	{
-		GrantedHandles.TakeFromAbilitySystem(AbilitySystemComponent);
 	}
 }

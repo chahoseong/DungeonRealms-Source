@@ -39,8 +39,9 @@ struct FDungeonRealmsEquipmentList : public FFastArraySerializer
 	//~Begin FFastArraySerializer contract
 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
-	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams);
 	//~End FFastArraySerializer contract
+	
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams);
 };
 
 template <>

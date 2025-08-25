@@ -5,6 +5,7 @@
 #include "UObject/Object.h"
 #include "DungeonRealmsEquipmentDefinition.generated.h"
 
+class UDungeonRealmsAbilitySet;
 class UDungeonRealmsEquipmentInstance;
 
 USTRUCT(BlueprintType)
@@ -56,6 +57,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment")
 	TArray<FEquipmentAttributeBonus> AttributeBonuses;
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	TArray<TObjectPtr<UDungeonRealmsAbilitySet>> AbilitySets;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment")
 	TSubclassOf<UDungeonRealmsEquipmentInstance> EquipmentInstanceClass;

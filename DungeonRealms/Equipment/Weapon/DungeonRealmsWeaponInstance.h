@@ -22,12 +22,8 @@ private:
 
 	void LinkAnimClassLayers(TSubclassOf<UAnimInstance> AnimClassLayers);
 	void UnlinkAnimClassLayers(TSubclassOf<UAnimInstance> AnimClassLayers);
-	
-	void GiveAbilitySetsToOwner(const TArray<UDungeonRealmsAbilitySet*>& AbilitySets);
-	void TakeAbilitySetsFromOwner();
 
 private:
-	FDungeonRealmsAbilitySet_GrantedHandles GrantedHandles;
 	bool bInputMappingContextAdded = false;
 	bool bAnimClassLayersLinked = false;
 };

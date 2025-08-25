@@ -24,6 +24,7 @@ public:
 	
 	TSubclassOf<UDungeonRealmsEquipmentDefinition> GetEquipmentDefinition() const;
 	FDungeonRealmsEquipmentId GetEquipmentId() const;
+	const FGameplayTagContainer& GetSlotTags() const;
 	const TArray<FEquipmentAttributeBonus>& GetAttributeBonuses() const;
 	
 	void AddEquipmentActor(AActor* EquipmentActor);
@@ -50,6 +51,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category="DungeonRealms|Equipment", DisplayName="OnUnequipped")
 	void K2_OnUnequipped();
 
+private:
+	void GiveAbilitySetsToOwner(const TArray<UDungeonRealmsAbilitySet*>& AbilitySets);
+	void TakeAbilitySetsFromOwner();
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TArray<TObjectPtr<UDungeonRealmsEquipmentAction>> EquipmentActions;
@@ -60,4 +65,6 @@ protected:
 private:
 	UPROPERTY(Transient, Replicated)
 	TArray<TObjectPtr<AActor>> SpawnedActors;
+	
+	FDungeonRealmsAbilitySet_GrantedHandles GrantedHandles;
 };
