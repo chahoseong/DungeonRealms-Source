@@ -18,6 +18,9 @@ class DUNGEONREALMS_API ADungeonRealmsPlayerCharacter : public ADungeonRealmsCha
 
 public:
 	ADungeonRealmsPlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UFUNCTION(BlueprintCallable)
+	void Equip(TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition);
 	
 	//~Begin APawn interface
 	virtual void PossessedBy(AController* NewController) override;
@@ -29,6 +32,10 @@ public:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 
+protected:
+	UFUNCTION(Server, Reliable)
+	void ServerEquip(TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition);
+	
 private:
 	void InitializeAbilitySystem();
 	

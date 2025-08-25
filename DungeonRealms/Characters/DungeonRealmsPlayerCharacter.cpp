@@ -15,6 +15,11 @@ ADungeonRealmsPlayerCharacter::ADungeonRealmsPlayerCharacter(const FObjectInitia
 	TargetLockComponent = CreateDefaultSubobject<UDungeonRealmsTargetLockComponent>(TEXT("TargetLockComponent"));
 }
 
+void ADungeonRealmsPlayerCharacter::Equip(TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition)
+{
+	ServerEquip(EquipmentDefinition);
+}
+
 void ADungeonRealmsPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -96,4 +101,10 @@ void ADungeonRealmsPlayerCharacter::Input_Look(const FInputActionValue& InputAct
 	{
 		AddControllerPitchInput(LookInput.Y);
 	}
+}
+
+void ADungeonRealmsPlayerCharacter::ServerEquip_Implementation(
+	TSubclassOf<UDungeonRealmsEquipmentDefinition> EquipmentDefinition)
+{
+	EquipmentManagerComponent->Equip(EquipmentDefinition);
 }
