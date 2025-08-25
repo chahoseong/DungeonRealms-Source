@@ -7,6 +7,7 @@
 #include "Team/DungeonRealmsTeam.h"
 #include "DungeonRealmsPlayerController.generated.h"
 
+class ADungeonRealmsHUD;
 class UDungeonRealmsInputConfig;
 class UInputMappingContext;
 struct FInputActionValue;
@@ -20,6 +21,9 @@ public:
 	ADungeonRealmsPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|PlayerController")
+	ADungeonRealmsHUD* GetDungeonRealmsHUD() const;
 
 	void SetPlayerIndex(int32 NewPlayerIndex);
 	

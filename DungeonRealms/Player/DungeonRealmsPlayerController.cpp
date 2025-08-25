@@ -120,6 +120,11 @@ void ADungeonRealmsPlayerController::PostProcessInput(const float DeltaTime, con
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
+ADungeonRealmsHUD* ADungeonRealmsPlayerController::GetDungeonRealmsHUD() const
+{
+	return GetHUD<ADungeonRealmsHUD>();
+}
+
 void ADungeonRealmsPlayerController::SetPlayerIndex(int32 NewPlayerIndex)
 {
 	if (ADungeonRealmsPlayerState* DungeonRealmsPlayerState = GetPlayerState<ADungeonRealmsPlayerState>())
