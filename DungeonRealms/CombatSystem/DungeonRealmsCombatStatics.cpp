@@ -2,6 +2,7 @@
 
 #include "DungeonRealmsCombatSystemComponent.h"
 #include "GenericTeamAgentInterface.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "Physics/DungeonRealmsCollisionChannels.h"
 #include "Team/DungeonRealmsTeam.h"
 
@@ -52,8 +53,7 @@ ETeamAttitude::Type UDungeonRealmsCombatStatics::GetTeamAttitudeTowards(const AA
 
 void UDungeonRealmsCombatStatics::ApplyDamageEffectToTarget(const AActor* TargetActor, const FDamageSpec& DamageSpec)
 {
-	UDungeonRealmsCombatSystemComponent* TargetCombatSystem = UDungeonRealmsCombatSystemComponent::FindCombatSystemComponent(TargetActor);
-	if (IsValid(TargetCombatSystem))
+	if (UDungeonRealmsCombatSystemComponent* TargetCombatSystem = UDungeonRealmsCombatSystemComponent::FindCombatSystemComponent(TargetActor))
 	{
 		TargetCombatSystem->ApplyDamageEffect(DamageSpec);
 	}

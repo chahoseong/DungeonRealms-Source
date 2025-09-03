@@ -40,7 +40,13 @@ struct FDungeonRealmsAttributeDefinition : public FTableRowBase
 	float MaxHealth = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category="Secondary Attributes")
+	float MaxStamina = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category="Secondary Attributes")
 	float MaxMana = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category="Secondary Attributes")
+	float MaxPoise = 0.0f;
 
 	TMap<FGameplayTag, float> GetPrimaryAttributeMagnitudes() const;
 	TMap<FGameplayTag, float> GetSecondaryAttributeMagnitudes() const;

@@ -4,8 +4,36 @@
 #include "FDungeonRealmsAttackTracer.h"
 #include "DungeonRealmsCombatSystemComponent.generated.h"
 
+class IDungeonRealmsCombatContext;
+struct FGameplayTag;
 class UGameplayEffect;
 class FDungeonRealmsAttackTracer;
+
+UENUM(BlueprintType)
+enum class EGuardResult : uint8
+{
+	Block,
+	Parry,
+	Failed,
+};
+
+USTRUCT(BlueprintType)
+struct FHitEventData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	AActor* Instigator = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly)
+	AActor* TargetActor = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bBlocked = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bParried = false;
+};
 
 USTRUCT(BlueprintType)
 struct FDamageSpec
@@ -32,13 +60,18 @@ struct FDamageSpec
 
 	UPROPERTY(BlueprintReadWrite)
 	float DamageImpact = 0.0f;
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	float KnockbackPower = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool bAttackBlocked = false;
+	
+	UPROPERTY(BlueprintReadWrite)
 	bool bShouldKnockdown = false;
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitsDelegate, const TArray<FHitEventData>&, HitEvents);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DUNGEONREALMS_API UDungeonRealmsCombatSystemComponent : public UActorComponent
@@ -53,7 +86,7 @@ public:
 	UDungeonRealmsCombatSystemComponent();
 
 	virtual void BeginPlay() override;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void BeginAttackTrace(FName SocketName);
 
@@ -64,19 +97,29 @@ public:
 	void EndAttackTrace();
 
 	UFUNCTION(BlueprintCallable)
-	void BeginGuard(float InDefenseDegrees);
+	void SetDefensibleAngle(float Degrees);
 
 	UFUNCTION(BlueprintCallable)
-	void EndGuard();
+	void SetParryable(bool bEnabled);
 
-	bool CanDefendAgainst(const UDungeonRealmsCombatSystemComponent* Attacker) const;
-	
+	UFUNCTION(BlueprintPure)
+	bool IsParryable() const;
+
+	bool IsGuardStance() const;
+	FHitEventData ResolveHitEvent(const AActor* Instigator, const FHitEventData& Payload) const;
+
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageEffect(const FDamageSpec& DamageSpec);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnHitsDelegate OnAttackHits;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHitsDelegate OnGuardHits;
+
 private:
 	TArray<FHitResult> FilterToHostileTargets(const TArray<FHitResult>& Hits) const;
-	void ApplyHitEvents(const TArray<FHitResult>& Hits) const;
+	void ProcessHitEvents(const TArray<FHitResult>& Hits) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
@@ -91,7 +134,6 @@ protected:
 private:
 	FDungeonRealmsAttackTracer AttackTracer;
 	TWeakObjectPtr<AActor> AttackTraceSourceActor;
-	
-	float DefenseDegrees = 0.0f;
-	bool bIsGuarding = false;
+	float DefensibleDegrees = 0.0f;
+	bool bParryable = false;
 };

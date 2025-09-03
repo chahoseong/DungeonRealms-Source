@@ -21,7 +21,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Dungeon Realms|Combat")
 	static ETeamAttitude::Type GetTeamAttitudeTowards(const AActor* QueryActor, const AActor* TargetActor);
-
+	
 	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|Combat")
 	static void ApplyDamageEffectToTarget(const AActor* TargetActor, const FDamageSpec& DamageSpec);
 };

@@ -10,17 +10,23 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(State_Guarding, "State.Guarding")
 	UE_DEFINE_GAMEPLAY_TAG(State_Rolling, "State.Rolling")
 	UE_DEFINE_GAMEPLAY_TAG(State_Dead, "State.Dead")
+	UE_DEFINE_GAMEPLAY_TAG(State_Groggy, "State.Groggy")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Move, "Input.Action.Move")
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Look, "Input.Action.Look")
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_SwitchTarget, "Input.Action.SwitchTarget")
 
 	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Hit, "Event.Attack.Hit")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Blocked, "Event.Attack.Blocked")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Attack_Parried, "Event.Attack.Parried")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Guard_Hit, "Event.Guard.Hit")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Left, "Event.SwitchTarget.Left")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Right, "Event.SwitchTarget.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Damaged, "Event.Damaged")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
+
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Attack_Knockback_Distance, "Combat.Attack.Knockback.Distance")
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Defense_Angle, "Combat.Defense.Angle")
 
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Strength, "SetByCaller.Attribute.Strength")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Intelligence, "SetByCaller.Attribute.Intelligence")
@@ -33,8 +39,7 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxHealth, "SetByCaller.Attribute.MaxHealth")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxStamina, "SetByCaller.Attribute.MaxStamina")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxMana, "SetByCaller.Attribute.MaxMana")
-	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_Poise, "SetByCaller.Attribute.Poise")
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Attribute_MaxPoise, "SetByCaller.Attribute.MaxPoise")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_AttackDamage_Coefficient, "SetByCaller.Damage.AttackDamage.Coefficient")
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_AbilityPower_Coefficient, "SetByCaller.Damage.AbilityPower.Coefficient")
-	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Damage_KnockbackPower, "SetByCaller.Damage.KnockbackPower")
 }

@@ -41,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="DungeonRealms|Character")
 	UAnimMontage* GetAnimMontage(const FGameplayTag& MontageTag) const;
+
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|Character")
+	void SyncWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation);
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
@@ -62,6 +65,15 @@ public:
 
 protected:
 	void InitializeAbilitySets();
+
+private:
+	UFUNCTION(Server, Reliable)
+	void ServerAddOrUpdateWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation);
+
+	UFUNCTION(Client, Reliable)
+	void ClientAddOrUpdateWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation);
+
+	void AddOrUpdateWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation) const;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)

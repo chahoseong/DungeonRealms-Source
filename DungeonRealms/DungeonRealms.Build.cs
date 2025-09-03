@@ -26,7 +26,8 @@ public class DungeonRealms : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"NetCore",
-			"AIModule"
+			"AIModule",
+			"MotionWarping"
 		]);
 
 		// Uncomment if you are using Slate UI

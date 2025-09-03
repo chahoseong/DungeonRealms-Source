@@ -170,7 +170,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Poise, Category="Resource Attributes")
 	FGameplayAttributeData Poise;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
 	FGameplayAttributeData IncomingDamage;
 };

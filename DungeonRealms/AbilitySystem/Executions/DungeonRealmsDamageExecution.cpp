@@ -1,6 +1,7 @@
 #include "AbilitySystem/Executions/DungeonRealmsDamageExecution.h"
 #include "AbilitySystem/DungeonRealmsAttributeSet.h"
 #include "DungeonRealmsGameplayTags.h"
+#include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
 
 struct FDamageStatics
 {
@@ -85,6 +86,12 @@ void UDungeonRealmsDamageExecution::Execute_Implementation(
 	const float AbilityPowerReductionRate = 100 / (100 + TargetResistance);
 	TotalDamage += SourceAbilityPower * AbilityPowerCoefficient * AbilityPowerReductionRate;
 
+	FDungeonRealmsGameplayEffectContext* ExtraContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(Spec.GetContext());
+	if (ExtraContext->IsAttackBlocked())
+	{
+		TotalDamage *= 0.1f;
+	}
+	
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
 		UDungeonRealmsAttributeSet::GetIncomingDamageAttribute(),
 		EGameplayModOp::Additive,

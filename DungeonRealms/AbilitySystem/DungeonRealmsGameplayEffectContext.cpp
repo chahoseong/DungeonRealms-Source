@@ -77,13 +77,17 @@ bool FDungeonRealmsGameplayEffectContext::NetSerialize(FArchive& Ar, class UPack
 		{
 			RepBits |= 1 << 8;
 		}
-		if (bKnockdown)
+		if (bAttackBlocked)
 		{
 			RepBits |= 1 << 9;
 		}
+		if (bKnockdown)
+		{
+			RepBits |= 1 << 10;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 10);
+	Ar.SerializeBits(&RepBits, 11);
 
 	if (RepBits & (1 << 0))
 	{
@@ -145,6 +149,10 @@ bool FDungeonRealmsGameplayEffectContext::NetSerialize(FArchive& Ar, class UPack
 	}
 	if (RepBits & (1 << 9))
 	{
+		Ar << bAttackBlocked;
+	}
+	if (RepBits & (1 << 10))
+	{
 		Ar << bKnockdown;
 	}
 
@@ -177,6 +185,16 @@ void FDungeonRealmsGameplayEffectContext::SetKnockbackPower(float Value)
 float FDungeonRealmsGameplayEffectContext::GetKnockbackPower() const
 {
 	return KnockbackPower;
+}
+
+void FDungeonRealmsGameplayEffectContext::SetAttackBlocked(bool bValue)
+{
+	bAttackBlocked = bValue;
+}
+
+bool FDungeonRealmsGameplayEffectContext::IsAttackBlocked() const
+{
+	return bAttackBlocked;
 }
 
 void FDungeonRealmsGameplayEffectContext::SetKnockdown(bool bValue)

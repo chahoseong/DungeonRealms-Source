@@ -22,6 +22,9 @@ struct FDungeonRealmsGameplayEffectContext : public FGameplayEffectContext
 	
 	void SetKnockbackPower(float Value);
 	float GetKnockbackPower() const;
+
+	void SetAttackBlocked(bool bValue);
+	bool IsAttackBlocked() const;
 	
 	void SetKnockdown(bool bValue);
 	bool ShouldKnockdown() const;
@@ -38,6 +41,9 @@ protected:
 
 	UPROPERTY()
 	bool bHasKnockbackPower = false;
+
+	UPROPERTY()
+	bool bAttackBlocked = false;
 	
 	UPROPERTY()
 	bool bKnockdown = false;

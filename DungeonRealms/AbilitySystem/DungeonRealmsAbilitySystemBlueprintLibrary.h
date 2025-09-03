@@ -11,21 +11,27 @@ class DUNGEONREALMS_API UDungeonRealmsAbilitySystemBlueprintLibrary : public UBl
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|EffectContext", meta=(DisplayName="SetDamageImpact"))
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|EffectContext", meta=(DisplayName="SetDamageImpact"))
 	static void EffectContextSetDamageImpact(FGameplayEffectContextHandle EffectContext, float Value);
 
-	UFUNCTION(BlueprintPure, Category="Dungeon Realms|EffectContext", meta=(DisplayName="GetDamageImpact"))
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|EffectContext", meta=(DisplayName="GetDamageImpact"))
 	static float EffectContextGetDamageImpact(FGameplayEffectContextHandle EffectContext);
 	
-	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|EffectContext", meta=(DisplayName="SetKnockbackPower"))
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|EffectContext", meta=(DisplayName="SetKnockbackPower"))
 	static void EffectContextSetKnockbackPower(FGameplayEffectContextHandle EffectContext, float Value);
 
-	UFUNCTION(BlueprintPure, Category="Dungeon Realms|EffectContext", meta=(DisplayName="GetKnockbackPower"))
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|EffectContext", meta=(DisplayName="GetKnockbackPower"))
 	static float EffectContextGetKnockbackPower(FGameplayEffectContextHandle EffectContext);
+
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|EffectContext", meta=(DisplayName="SetAttackBlocked"))
+	static void EffectContextSetAttackBlocked(FGameplayEffectContextHandle EffectContext, bool bValue);
+
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|EffectContext", meta=(DisplayName="IsAttackBlocked"))
+	static bool EffectContextIsAttackBlocked(FGameplayEffectContextHandle EffectContext);
 	
-	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|EffectContext", meta=(DisplayName="SetKnockdown"))
+	UFUNCTION(BlueprintCallable, Category="DungeonRealms|EffectContext", meta=(DisplayName="SetKnockdown"))
 	static void EffectContextSetKnockdown(FGameplayEffectContextHandle EffectContext, bool bValue);
 
-	UFUNCTION(BlueprintPure, Category="Dungeon Realms|EffectContext", meta=(DisplayName="ShouldKnockdown"))
+	UFUNCTION(BlueprintPure, Category="DungeonRealms|EffectContext", meta=(DisplayName="ShouldKnockdown"))
 	static bool EffectContextShouldKnockdown(FGameplayEffectContextHandle EffectContext);
 };

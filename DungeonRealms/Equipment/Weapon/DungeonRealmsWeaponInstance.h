@@ -15,7 +15,7 @@ class DUNGEONREALMS_API UDungeonRealmsWeaponInstance : public UDungeonRealmsEqui
 public:
 	virtual void OnEquipped() override;
 	virtual void OnUnequipped() override;
-
+	
 private:
 	void AddInputMappingContext(const UInputMappingContext* InputMappingContext, int32 Priority);
 	void RemoveInputMappingContext(const UInputMappingContext* InputMappingContext);

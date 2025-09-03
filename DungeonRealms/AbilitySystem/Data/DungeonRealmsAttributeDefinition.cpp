@@ -20,6 +20,8 @@ TMap<FGameplayTag, float> FDungeonRealmsAttributeDefinition::GetSecondaryAttribu
 	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_Armor, Armor);
 	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_Resistance, Resistance);
 	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_MaxHealth, MaxHealth);
+	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_MaxStamina, MaxStamina);
 	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_MaxMana, MaxMana);
+	Magnitudes.Add(DungeonRealmsGameplayTags::SetByCaller_Attribute_MaxPoise, MaxPoise);
 	return Magnitudes;
 }

@@ -90,13 +90,17 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 			const float NewHealth = GetHealth() - IncomingDamageMagnitude;
 			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
-			FDungeonRealmsGameplayEffectContext* ExtraEffectContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(Data.EffectSpec.GetContext());
-			const float NewPoise = GetPoise() - ExtraEffectContext->GetDamageImpact();
-			SetPoise(FMath::Clamp(NewPoise, 0.0f, GetMaxPoise()));
+			if (!GetOwningAbilitySystemComponent()->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Groggy))
+			{
+				FDungeonRealmsGameplayEffectContext* ExtraEffectContext =
+					FDungeonRealmsGameplayEffectContext::ExtraEffectContext(Data.EffectSpec.GetContext());
+				const float NewPoise = GetPoise() - ExtraEffectContext->GetDamageImpact();
+				SetPoise(FMath::Clamp(NewPoise, 0.0f, GetMaxPoise()));
+			}
 
 			const FGameplayTag EventTag = NewHealth > 0.0f
-										   ? DungeonRealmsGameplayTags::Event_Damaged
-										   : DungeonRealmsGameplayTags::Event_Dead;
+				                              ? DungeonRealmsGameplayTags::Event_Damaged
+				                              : DungeonRealmsGameplayTags::Event_Dead;
 			FGameplayEventData EventData;
 			EventData.ContextHandle = Data.EffectSpec.GetContext();
 			EventData.Instigator = Data.EffectSpec.GetContext().GetEffectCauser();
@@ -105,8 +109,9 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 				EventTag,
 				EventData
 			);
-			
-			UE_LOG(LogTemp, Warning, TEXT("Incoming Damage: %f, Current Health: %f"), IncomingDamageMagnitude, GetHealth());
+
+			UE_LOG(LogTemp, Warning, TEXT("Incoming Damage: %f, Current Health: %f"), IncomingDamageMagnitude,
+			       GetHealth());
 		}
 	}
 }

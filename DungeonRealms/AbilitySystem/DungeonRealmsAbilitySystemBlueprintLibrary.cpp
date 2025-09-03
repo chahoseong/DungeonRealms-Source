@@ -38,6 +38,25 @@ float UDungeonRealmsAbilitySystemBlueprintLibrary::EffectContextGetKnockbackPowe
 	return 0.0f;
 }
 
+void UDungeonRealmsAbilitySystemBlueprintLibrary::EffectContextSetAttackBlocked(
+	FGameplayEffectContextHandle EffectContext, bool bValue)
+{
+	if (FDungeonRealmsGameplayEffectContext* DungeonRealmsEffectContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(EffectContext))
+	{
+		DungeonRealmsEffectContext->SetAttackBlocked(bValue);
+	}
+}
+
+bool UDungeonRealmsAbilitySystemBlueprintLibrary::EffectContextIsAttackBlocked(
+	FGameplayEffectContextHandle EffectContext)
+{
+	if (FDungeonRealmsGameplayEffectContext* DungeonRealmsEffectContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(EffectContext))
+	{
+		return DungeonRealmsEffectContext->IsAttackBlocked();
+	}
+	return false;
+}
+
 void UDungeonRealmsAbilitySystemBlueprintLibrary::EffectContextSetKnockdown(FGameplayEffectContextHandle EffectContext,
                                                                             bool bValue)
 {

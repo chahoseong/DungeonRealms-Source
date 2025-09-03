@@ -4,7 +4,6 @@
 #include "CombatSystem/DungeonRealmsCombatSystemInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "Abilities/GameplayAbilityTypes.h"
 #include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
 #include "Characters/DungeonRealmsCharacter.h"
 #include "DungeonRealmsGameplayTags.h"
@@ -40,7 +39,7 @@ void UDungeonRealmsCombatSystemComponent::BeginPlay()
 
 void UDungeonRealmsCombatSystemComponent::BeginAttackTrace(FName SocketName)
 {
-	ADungeonRealmsCharacter* OwningCharacter = GetOwner<ADungeonRealmsCharacter>();
+	const ADungeonRealmsCharacter* OwningCharacter = GetOwner<ADungeonRealmsCharacter>();
 	AttackTraceSourceActor = OwningCharacter->GetAttachedActorFromSocket(SocketName);
 	if (AttackTraceSourceActor.IsValid())
 	{
@@ -70,7 +69,6 @@ void UDungeonRealmsCombatSystemComponent::PerformAttackTrace()
 	{
 		return;
 	}
-	
 	if (UDungeonRealmsCombatStatics::HasObstacleBetween(GetOwner(), AttackTraceSourceActor.Get()))
 	{
 		return;
@@ -78,7 +76,7 @@ void UDungeonRealmsCombatSystemComponent::PerformAttackTrace()
 	const TArray<FHitResult> Hits =
 		AttackTracer.PerformTrace(AttackTraceSubsteps, bDrawDebugAttackTrace);
 	const TArray<FHitResult> HostileTargets = FilterToHostileTargets(Hits);
-	ApplyHitEvents(HostileTargets);
+	ProcessHitEvents(HostileTargets);
 }
 
 TArray<FHitResult> UDungeonRealmsCombatSystemComponent::FilterToHostileTargets(const TArray<FHitResult>& Hits) const
@@ -95,46 +93,38 @@ TArray<FHitResult> UDungeonRealmsCombatSystemComponent::FilterToHostileTargets(c
 	return HostileTargets;
 }
 
-void UDungeonRealmsCombatSystemComponent::ApplyHitEvents(const TArray<FHitResult>& Hits) const
+void UDungeonRealmsCombatSystemComponent::ProcessHitEvents(const TArray<FHitResult>& Hits) const
 {
-	TArray<TWeakObjectPtr<AActor>> HitTargets;
+	TArray<FHitEventData> HitEvents;
 	
 	for (const FHitResult& Hit : Hits)
 	{
 		AActor* HitActor = Hit.GetActor();
+		
+		FHitEventData HitEvent;
+		HitEvent.Instigator = GetOwner();
+		HitEvent.TargetActor = HitActor;
+		
 		if (const UDungeonRealmsCombatSystemComponent* TargetCombatSystem =
 			FindCombatSystemComponent(HitActor))
 		{
-			if (TargetCombatSystem->CanDefendAgainst(this))
+			if (TargetCombatSystem->IsGuardStance())
 			{
-				FGameplayEventData HitEventData;
-				HitEventData.Instigator = GetOwner();
-				FGameplayAbilityTargetData* TargetData = new FGameplayAbilityTargetData_SingleTargetHit(Hit);
-				HitEventData.TargetData = FGameplayAbilityTargetDataHandle(TargetData);
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-					HitActor,
-					DungeonRealmsGameplayTags::Event_Guard_Hit,
-					HitEventData
-				);
-				break;
+				HitEvent = TargetCombatSystem->ResolveHitEvent(GetOwner(), HitEvent);
 			}
 		}
 		
-		HitTargets.Add(HitActor);
+		HitEvents.Add(HitEvent);
+
+		if (HitEvent.bParried)
+		{
+			break;
+		}
 	}
 
-	if (HitTargets.Num() > 0)
+	if (HitEvents.Num() > 0)
 	{
-		FGameplayEventData HitEventData;
-		HitEventData.Instigator = GetOwner();
-		FGameplayAbilityTargetData_ActorArray* HitTargetData = new FGameplayAbilityTargetData_ActorArray();
-		HitTargetData->SetActors(HitTargets);
-		HitEventData.TargetData = FGameplayAbilityTargetDataHandle(HitTargetData);
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-			GetOwner(),
-			DungeonRealmsGameplayTags::Event_Attack_Hit,
-			HitEventData
-		);
+		OnAttackHits.Broadcast(HitEvents);
 	}
 }
 
@@ -143,27 +133,51 @@ void UDungeonRealmsCombatSystemComponent::EndAttackTrace()
 	AttackTracer.EndTrace();
 }
 
-void UDungeonRealmsCombatSystemComponent::BeginGuard(float InDefenseDegrees)
+void UDungeonRealmsCombatSystemComponent::SetDefensibleAngle(float Degrees)
 {
-	DefenseDegrees = InDefenseDegrees;
-	bIsGuarding = true;
+	DefensibleDegrees = Degrees;
 }
 
-void UDungeonRealmsCombatSystemComponent::EndGuard()
+void UDungeonRealmsCombatSystemComponent::SetParryable(bool bEnabled)
 {
-	bIsGuarding = false;
+	bParryable = bEnabled;
 }
 
-bool UDungeonRealmsCombatSystemComponent::CanDefendAgainst(const UDungeonRealmsCombatSystemComponent* Attacker) const
+bool UDungeonRealmsCombatSystemComponent::IsParryable() const
 {
-	if (!bIsGuarding)
-	{
-		return false;
-	}
+	return bParryable;
+}
+
+bool UDungeonRealmsCombatSystemComponent::IsGuardStance() const
+{
+	UAbilitySystemComponent* OwningAbilitySystem =
+		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	return IsValid(OwningAbilitySystem)
+		       ? OwningAbilitySystem->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Guarding)
+		       : false;
+}
+
+FHitEventData UDungeonRealmsCombatSystemComponent::ResolveHitEvent(
+	const AActor* Instigator, const FHitEventData& Payload) const
+{
 	const AActor* OwningActor = GetOwner();
-	const FVector ToAttacker = Attacker->GetOwner()->GetActorLocation() - OwningActor->GetActorLocation();
+	const FVector ToAttacker = Instigator->GetActorLocation() - OwningActor->GetActorLocation();
 	const float DotResult = OwningActor->GetActorForwardVector().Dot(ToAttacker.GetSafeNormal2D());
-	return UKismetMathLibrary::DegAcos(DotResult) <= DefenseDegrees;
+
+	FHitEventData HitEvent = Payload;
+	if (UKismetMathLibrary::DegAcos(DotResult) <= DefensibleDegrees)
+	{
+		if (IsParryable())
+		{
+			HitEvent.bParried = true;
+		}
+		else
+		{
+			HitEvent.bBlocked = true;
+		}
+		OnGuardHits.Broadcast({HitEvent});
+	}
+	return HitEvent;
 }
 
 void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& DamageSpec)
@@ -177,6 +191,7 @@ void UDungeonRealmsCombatSystemComponent::ApplyDamageEffect(const FDamageSpec& D
 	FDungeonRealmsGameplayEffectContext* ExtraEffectContext = FDungeonRealmsGameplayEffectContext::ExtraEffectContext(EffectContext);
 	ExtraEffectContext->SetDamageImpact(DamageSpec.DamageImpact);
 	ExtraEffectContext->SetKnockbackPower(DamageSpec.KnockbackPower);
+	ExtraEffectContext->SetAttackBlocked(DamageSpec.bAttackBlocked);
 	ExtraEffectContext->SetKnockdown(DamageSpec.bShouldKnockdown);
 	
 	FGameplayEffectSpecHandle EffectSpec = OwningAbilitySystem->MakeOutgoingSpec(DamageSpec.DamageEffect, 1.0f, EffectContext);

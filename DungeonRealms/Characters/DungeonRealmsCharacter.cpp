@@ -1,5 +1,4 @@
 #include "Characters/DungeonRealmsCharacter.h"
-
 #include "AbilitySystemComponent.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
 #include "DungeonRealmsCharacterMovementComponent.h"
@@ -8,6 +7,7 @@
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Net/UnrealNetwork.h"
+#include "MotionWarpingComponent.h"
 #include "Team/DungeonRealmsTeam.h"
 
 ADungeonRealmsCharacter::ADungeonRealmsCharacter(const FObjectInitializer& ObjectInitializer)
@@ -85,7 +85,7 @@ void ADungeonRealmsCharacter::InitializeAbilitySets()
 }
 
 FActiveGameplayEffectHandle ADungeonRealmsCharacter::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectToApply,
-                                                                const TMap<FGameplayTag, float>& SetByCallers)
+                                                                       const TMap<FGameplayTag, float>& SetByCallers)
 {
 	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
 	EffectContext.AddSourceObject(this);
@@ -116,6 +116,38 @@ void ADungeonRealmsCharacter::RemoveAnimMontage(const FGameplayTag& MontageTag)
 UAnimMontage* ADungeonRealmsCharacter::GetAnimMontage(const FGameplayTag& MontageTag) const
 {
 	return AnimMontages.FindRef(MontageTag);
+}
+
+void ADungeonRealmsCharacter::SyncWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation)
+{
+	if (HasAuthority())
+	{
+		AddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+		ClientAddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+	}
+	else
+	{
+		AddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+		ServerAddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+	}
+}
+
+void ADungeonRealmsCharacter::ServerAddOrUpdateWarpTargetFromLocation_Implementation(FName WarpTargetName, const FVector& TargetLocation)
+{
+	AddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+}
+
+void ADungeonRealmsCharacter::ClientAddOrUpdateWarpTargetFromLocation_Implementation(FName WarpTargetName, const FVector& TargetLocation)
+{
+	AddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+}
+
+void ADungeonRealmsCharacter::AddOrUpdateWarpTargetFromLocation(FName WarpTargetName, const FVector& TargetLocation) const
+{
+	if (UMotionWarpingComponent* MotionWarping = FindComponentByClass<UMotionWarpingComponent>())
+	{
+		MotionWarping->AddOrUpdateWarpTargetFromLocation(WarpTargetName, TargetLocation);
+	}
 }
 
 UAbilitySystemComponent* ADungeonRealmsCharacter::GetAbilitySystemComponent() const
