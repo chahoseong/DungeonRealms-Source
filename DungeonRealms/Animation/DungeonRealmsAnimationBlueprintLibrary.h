@@ -11,5 +11,5 @@ class DUNGEONREALMS_API UDungeonRealmsAnimationBlueprintLibrary : public UBluepr
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Dungeon Realms|Animation")
-	static void AddOrUpdateWarpTargetFromLocation(AActor* Actor, const FVector& Location);
+	static bool IsPlayInPreview(UObject* WorldContextObject);
 };

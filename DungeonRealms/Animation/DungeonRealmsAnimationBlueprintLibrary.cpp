@@ -1,6 +1,7 @@
 ﻿#include "Animation/DungeonRealmsAnimationBlueprintLibrary.h"
 
-void UDungeonRealmsAnimationBlueprintLibrary::AddOrUpdateWarpTargetFromLocation(AActor* Actor, const FVector& Location)
+bool UDungeonRealmsAnimationBlueprintLibrary::IsPlayInPreview(UObject* WorldContextObject)
 {
-	
+	const UWorld* World = WorldContextObject->GetWorld();
+	return IsValid(World) ? World->IsPlayInPreview() : false;
 }
