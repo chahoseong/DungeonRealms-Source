@@ -133,6 +133,83 @@ void UDungeonRealmsCombatSystemComponent::EndAttackTrace()
 	AttackTracer.EndTrace();
 }
 
+void UDungeonRealmsCombatSystemComponent::SphereAttackTrace(
+	const FVector& Location,
+	float Radius)
+{
+	auto DebugDrawer = [this, Location, Radius](bool bHit)
+	{
+		DrawDebugSphere(
+			GetWorld(),
+			Location,
+			Radius,
+			24,
+			bHit ? FColor::Red : FColor::Green,
+			false,
+			2.0f
+		);
+	};
+	ImmediateAttackTrace(
+		Location,
+		FRotator::ZeroRotator,
+		FCollisionShape::MakeSphere(Radius),
+		DebugDrawer
+	);
+}
+
+void UDungeonRealmsCombatSystemComponent::CapsuleAttackTrace(const FVector& Location, const FRotator& Rotation,
+	float HalfHeight, float Radius)
+{
+	auto DebugDrawer = [this, Location, Rotation, HalfHeight, Radius](bool bHit)
+	{
+		DrawDebugCapsule(
+			GetWorld(),
+			Location,
+			HalfHeight,
+			Radius,
+			Rotation.Quaternion(),
+			bHit ? FColor::Red : FColor::Green,
+			false,
+			2.0f
+		);
+	};
+	ImmediateAttackTrace(
+		Location,
+		Rotation,
+		FCollisionShape::MakeCapsule(Radius, HalfHeight),
+		DebugDrawer
+	);
+}
+
+void UDungeonRealmsCombatSystemComponent::ImmediateAttackTrace(
+	const FVector& Location,
+	const FRotator& Rotation,
+	const FCollisionShape& Shape,
+	const TFunction<void(bool)>& DebugDrawer) const
+{
+	TArray<FHitResult> Hits;
+	const FCollisionQueryParams CollisionQueryParams(SCENE_QUERY_STAT(DungeonRealmsCombatSystemComponent_SphereAttackTrace),
+		false, GetOwner());
+	
+	GetWorld()->SweepMultiByObjectType(
+		Hits,
+		Location,
+		Location,
+		Rotation.Quaternion(),
+		FCollisionObjectQueryParams(AttackTraceObjectTypes),
+		Shape,
+		CollisionQueryParams
+	);
+
+	if (GetOwner()->HasAuthority() && bDrawDebugAttackTrace && DebugDrawer)
+	{
+		DebugDrawer(Hits.Num() > 0);
+	}
+	
+	const TArray<FHitResult> HostileTargets = FilterToHostileTargets(Hits);
+	ProcessHitEvents(HostileTargets);
+}
+
 void UDungeonRealmsCombatSystemComponent::SetDefensibleAngle(float Degrees)
 {
 	DefensibleDegrees = Degrees;

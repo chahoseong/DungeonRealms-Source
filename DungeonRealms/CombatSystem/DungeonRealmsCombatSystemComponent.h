@@ -95,6 +95,20 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EndAttackTrace();
+	
+	UFUNCTION(BlueprintCallable)
+	void SphereAttackTrace(
+		const FVector& Location,
+		float Radius
+	);
+
+	UFUNCTION(BlueprintCallable)
+	void CapsuleAttackTrace(
+		const FVector& Location,
+		const FRotator& Rotation,
+		float HalfHeight,
+		float Radius
+	);
 
 	UFUNCTION(BlueprintCallable)
 	void SetDefensibleAngle(float Degrees);
@@ -118,6 +132,12 @@ public:
 	FOnHitsDelegate OnGuardHits;
 
 private:
+	void ImmediateAttackTrace(
+		const FVector& Location,
+		const FRotator& Rotation,
+		const FCollisionShape& Shape,
+		const TFunction<void(bool)>& DebugDrawer
+	) const;
 	TArray<FHitResult> FilterToHostileTargets(const TArray<FHitResult>& Hits) const;
 	void ProcessHitEvents(const TArray<FHitResult>& Hits) const;
 
