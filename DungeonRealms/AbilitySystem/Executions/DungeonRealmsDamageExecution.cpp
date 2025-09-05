@@ -90,6 +90,7 @@ void UDungeonRealmsDamageExecution::Execute_Implementation(
 	if (ExtraContext->IsAttackBlocked())
 	{
 		TotalDamage *= 0.1f;
+		ExtraContext->SetDamageImpact(0.0f);
 	}
 	
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
