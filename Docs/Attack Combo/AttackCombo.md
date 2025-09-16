@@ -1,8 +1,7 @@
 # Attack Combo
 
 ## 개요
-- 플레이어의 입력에 따라 자연스러운 연속 공격을 구현합니다
-
+플레이어의 입력에 따라 자연스러운 연속 공격을 구현합니다
 [실행 결과](https://drive.google.com/file/d/1kt9mIrZkSf_mqzFXEYNOQKuekR6NZWXr/view?usp=sharing)
 
 ## 구현 방식
