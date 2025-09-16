@@ -2,6 +2,7 @@
 
 ## 개요
 - 플레이어의 입력에 따라 자연스러운 연속 공격을 구현합니다
+[실행 결과](https://drive.google.com/file/d/1kt9mIrZkSf_mqzFXEYNOQKuekR6NZWXr/view?usp=sharing)
 
 ## 구현 방식
 ### Combo Window
@@ -79,6 +80,3 @@ bool UDungeonRealmsGameplayAbility_MeleeWeapon::IsComboWindowOpen() const
 }
 ```
 [IsComboWindowOpen](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L85-L96)
-
-## 결과 영상
-[동영상 링크](https://drive.google.com/file/d/1kt9mIrZkSf_mqzFXEYNOQKuekR6NZWXr/view?usp=sharing)
