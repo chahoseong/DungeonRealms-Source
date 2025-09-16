@@ -14,7 +14,7 @@
 [ComboInput](Docs/Attack Combo/ComboInput.png)
 
 - 이때, 클라이언트에서 먼저 다음 공격 어빌리티를 활성화한 다음 서버로 요청을 보냅니다.
-[CommitCombo](DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L19-L39)
+[CommitCombo](../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L19-L39)
 ```cpp
 void UDungeonRealmsGameplayAbility_MeleeWeapon::CommitCombo()
 {
@@ -40,7 +40,7 @@ void UDungeonRealmsGameplayAbility_MeleeWeapon::CommitCombo()
 ```
 
 - 서버에서는 클라이언트의 요청이 올바른지 평가하고, 만약 유효하지 않으면 클라이언트가 활성화한 어빌리티를 취소합니다.
-[ServerCommitCombo](DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L41-L54)
+[ServerCommitCombo](../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L41-L54)
 ```cpp
 void UDungeonRealmsGameplayAbility_MeleeWeapon::ServerCommitCombo_Implementation(
 	FGameplayAbilitySpecHandle PredicatedAbilitySpecHandle)
@@ -67,7 +67,7 @@ void UDungeonRealmsGameplayAbility_MeleeWeapon::ServerCommitCombo_Implementation
 
 ### 콤보 
 클라이언트에서 콤보 요청이 왔을 때, 네트워크 지연 때문에 서버에 요청에 도달했을 때는 Combo Window가 닫혀있을 수 있습니다. 따라서 이를 보상해주기 위해 서버에서 Combo Window가 닫혔을 때 시간과 클라이언트에서 요청이 왔을 때의 시간 차이를 계산하여 어느정도 늦게 오더라도 콤보 요청을 유효하다고 판단했습니다.
-[IsComboWindowOpen](DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L85-L96)
+[IsComboWindowOpen](../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L85-L96)
 ```cpp
 bool UDungeonRealmsGameplayAbility_MeleeWeapon::IsComboWindowOpen() const
 {
