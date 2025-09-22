@@ -6,8 +6,7 @@
 
 ## 구현 방식
 ### Combo Window
-- **Anim Notify State**를 사용하여 애니메이션의 특정 구간에
-**콤보가 가능한 영역(Combo Window)**을 정의합니다.
+- **Anim Notify State**를 사용하여 애니메이션의 특정 구간에 **콤보가 가능한 영역(Combo Window)**을 정의합니다.
 ![ComboWindow](ComboWindow.png)
 
 ### Local Prediction
