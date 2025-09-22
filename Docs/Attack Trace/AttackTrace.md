@@ -8,7 +8,7 @@
 ### Anim Notify State
 - 애님 노티파이 스테이트를 사용하여 애니메이션이 재생될 동안 트레이스를 수행할 구간을 설정합니다.
 - 소켓을 입력하여 특정 무기만 선택하여 트레이스를 수행합니다.
-![AttackTraceAnimNotifyStateDetail](AttackTraceDetail)
+![AttackTraceAnimNotifyStateDetail](AttackTraceDetail.png)
 
 ### 여러 충돌 모양 지원
 - Box, Capsule 형태로 트레이스를 수행할 수 있습니다. 무기 액터가 가지고 있는 히트박스 컴포넌트와 일치하는 모양을 선택한 다음 트레이스를 수행합니다., 
