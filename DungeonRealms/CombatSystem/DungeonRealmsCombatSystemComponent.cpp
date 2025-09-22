@@ -1,6 +1,6 @@
 ﻿#include "CombatSystem/DungeonRealmsCombatSystemComponent.h"
 #include "CombatSystem/DungeonRealmsCombatStatics.h"
-#include "CombatSystem/FDungeonRealmsAttackTracer.h"
+#include "CombatSystem/DungeonRealmsAttackTracer.h"
 #include "CombatSystem/DungeonRealmsCombatSystemInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
