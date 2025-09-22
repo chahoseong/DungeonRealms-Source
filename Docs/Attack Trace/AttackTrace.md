@@ -11,21 +11,32 @@
 ![AttackTraceAnimNotifyStateDetail](AttackTraceDetail.png)
 
 ### 여러 충돌 모양 지원
-- Box, Capsule 형태로 트레이스를 수행할 수 있습니다. 무기 액터가 가지고 있는 히트박스 컴포넌트와 일치하는 모양을 선택한 다음 트레이스를 수행합니다., 
+- Box, Capsule 형태로 트레이스를 수행할 수 있습니다. 무기 액터가 가지고 있는 히트박스 컴포넌트와 일치하는 모양을 선택한 다음 트레이스를 수행합니다.
 ```cpp
-/* DungeonRealmsAttackTraceShapes.h */
 struct FEmptyAttackTrace { };
 struct FBoxAttackTrace { };
 struct FCapsuleAttackTrace { };
 
 using FAttackTraceShape =
 	TVariant<FEmptyAttackTrace, FBoxAttackTrace, FCapsuleAttackTrace>;
+```
+[AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h#L5-L10)
 
-/* DungeonRealmsAttackTracer.cpp */
+```cpp
+// 프리미티브 컴포넌트와 트레이스 모양을 등록합니다.
+AttackTraceShapes.Add(UBoxComponent::StaticClass(),
+	CreateAttackTraceShape<FBoxAttackTrace>());
+AttackTraceShapes.Add(UCapsuleComponent::StaticClass(),
+	CreateAttackTraceShape<FCapsuleAttackTrace>());
+
+...
+
+// 히트박스 컴포넌트와 일치하는 트레이스 모양을 선택합니다.
 FAttackTraceShape AttackTraceShape = AttackTraceShapes.FindRef(HitboxComponent->GetClass(), CreateAttackTraceShape<FEmptyAttackTrace>());
 
 ...
 
+// 트레이스 실행
 TArray<FHitResult> SubHits = Visit(
 	FPerformAttackTrace(
 		HitboxComponent.Get(),
@@ -38,8 +49,7 @@ TArray<FHitResult> SubHits = Visit(
 	AttackTraceShape
 );
 ```
-[AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h#L5-L10)
-[AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.h#L33-L75)
+[AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.h)
 
 ### 분할 충돌 검사
 - 충돌 검사를 할 때, 무기의 이전 프레임의 트랜스폼과 현재 프레임의 트랜스폼을 일정 간격(substep)으로 보간(interpolation)한 결과로 검사를 수행합니다. 이를 통해 궤적이 복잡하더라도 최대한 근사(approximiation)하여 충돌 판정을 합니다.
