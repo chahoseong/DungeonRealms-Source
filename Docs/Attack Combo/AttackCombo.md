@@ -37,7 +37,7 @@ void UDungeonRealmsGameplayAbility_MeleeWeapon::CommitCombo()
 	}
 }
 ```
-[CommitCombo](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L19-L39)
+- [CommitCombo](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L19-L39)
 
 - 서버에서는 클라이언트의 요청이 올바른지 평가하고, 만약 유효하지 않으면 클라이언트가 활성화한 어빌리티를 취소합니다.
 ```cpp
@@ -56,7 +56,7 @@ void UDungeonRealmsGameplayAbility_MeleeWeapon::ServerCommitCombo_Implementation
 	}
 }
 ```
-[ServerCommitCombo](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L41-L54)
+- [ServerCommitCombo](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L41-L54)
 
 ## 문제 및 해결
 ### ComboWindow 동기화
@@ -78,4 +78,4 @@ bool UDungeonRealmsGameplayAbility_MeleeWeapon::IsComboWindowOpen() const
 	}
 }
 ```
-[IsComboWindowOpen](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L85-L96)
+- [IsComboWindowOpen](../../DungeonRealms/Equipment/Weapon/DungeonRealmsGameplayAbility_MeleeWeapon.cpp#L85-L96)

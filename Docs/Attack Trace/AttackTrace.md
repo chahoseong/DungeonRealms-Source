@@ -20,7 +20,7 @@ struct FCapsuleAttackTrace { };
 using FAttackTraceShape =
 	TVariant<FEmptyAttackTrace, FBoxAttackTrace, FCapsuleAttackTrace>;
 ```
-[AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h#L5-L10)
+- [AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h#L5-L10)
 
 ```cpp
 // 프리미티브 컴포넌트와 트레이스 모양을 등록합니다.
@@ -49,7 +49,7 @@ TArray<FHitResult> SubHits = Visit(
 	AttackTraceShape
 );
 ```
-[AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.h)
+- [AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.h)
 
 ### 분할 충돌 검사
 - 충돌 검사를 할 때, 무기의 이전 프레임의 트랜스폼과 현재 프레임의 트랜스폼을 일정 간격(substep)으로 보간(interpolation)한 결과로 검사를 수행합니다. 이를 통해 궤적이 복잡하더라도 최대한 근사(approximiation)하여 충돌 판정을 합니다.
@@ -80,12 +80,12 @@ for (int32 i = 0; i < Substeps; ++i)
     ...
 }
 ```
-[AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.cpp#L43-L64)
+- [AttackTracer](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTracer.cpp#L43-L64)
 
 ## 문제 및 해결
 ### 다양한 트레이스 모양 지원
 박스, 캡슐 등 다양한 트레이스 형태를 지원하기 위해서 `TVariant`을 사용한 Visitor 패턴을 구현하였습니다. 이 방식은 각 트레이스 형태가 자신에게 필요한 데이터만 독립적으로 보유할 수 있어 코드의 가독성과 유지보수성을 높입니다. `TVariant` 타입은 컴파일에 데이터가 결정되므로 성능도 좋고, 오류도 찾기 쉽습니다.
-[AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h)
+- [AttackTraceShapes](../../DungeonRealms/CombatSystem/DungeonRealmsAttackTraceShapes.h)
 
 ### 충돌 유효성 검사
 트레이스를 통해 충돌을 판정하더라도 해당 충돌이 유효하지 않을 수 있습니다. 예를 들어, 장애물을 사이의 두고 공격을 한다면, 공격 트레이스는 벽을 통과하여 판정을 수행할 것이고 상대방은 벽 넘어로 공격을 당할 수 있습니다.
@@ -110,4 +110,4 @@ bool UDungeonRealmsCombatStatics::HasObstacleBetween(const AActor* SourceActor, 
 	);
 }
 ```
-[HasObstacleBetween](../../DungeonRealms/CombatSystem/DungeonRealmsCombatStatics.cpp#L9-L24)
+- [HasObstacleBetween](../../DungeonRealms/CombatSystem/DungeonRealmsCombatStatics.cpp#L9-L24)
