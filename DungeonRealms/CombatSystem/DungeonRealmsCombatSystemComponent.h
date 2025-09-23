@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "FDungeonRealmsAttackTracer.h"
+#include "DungeonRealmsAttackTracer.h"
 #include "DungeonRealmsCombatSystemComponent.generated.h"
 
 class IDungeonRealmsCombatContext;
