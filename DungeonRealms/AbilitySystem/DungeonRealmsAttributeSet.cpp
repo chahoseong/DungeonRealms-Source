@@ -1,6 +1,7 @@
 ﻿#include "AbilitySystem/DungeonRealmsAttributeSet.h"
 #include "AbilitySystem/DungeonRealmsGameplayEffectContext.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "DungeonRealmsAbilitySystemBlueprintLibrary.h"
 #include "DungeonRealmsGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
@@ -90,17 +91,27 @@ void UDungeonRealmsAttributeSet::PostGameplayEffectExecute(const FGameplayEffect
 			const float NewHealth = GetHealth() - IncomingDamageMagnitude;
 			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
+			FDungeonRealmsGameplayEffectContext* ExtraEffectContext =
+								FDungeonRealmsGameplayEffectContext::ExtraEffectContext(Data.EffectSpec.GetContext());
+			
 			if (!GetOwningAbilitySystemComponent()->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Groggy))
 			{
-				FDungeonRealmsGameplayEffectContext* ExtraEffectContext =
-					FDungeonRealmsGameplayEffectContext::ExtraEffectContext(Data.EffectSpec.GetContext());
 				const float NewPoise = GetPoise() - ExtraEffectContext->GetDamageImpact();
 				SetPoise(FMath::Clamp(NewPoise, 0.0f, GetMaxPoise()));
 			}
 
-			const FGameplayTag EventTag = NewHealth > 0.0f
-				                              ? DungeonRealmsGameplayTags::Event_Damaged
-				                              : DungeonRealmsGameplayTags::Event_Dead;
+			FGameplayTag EventTag;
+			if (ExtraEffectContext->IsAttackBlocked())
+			{
+				EventTag = DungeonRealmsGameplayTags::Event_Blocked;
+			}
+			else
+			{
+				EventTag = NewHealth > 0.0f
+					           ? DungeonRealmsGameplayTags::Event_Damaged
+					           : DungeonRealmsGameplayTags::Event_Dead;
+			}
+			
 			FGameplayEventData EventData;
 			EventData.ContextHandle = Data.EffectSpec.GetContext();
 			EventData.Instigator = Data.EffectSpec.GetContext().GetEffectCauser();

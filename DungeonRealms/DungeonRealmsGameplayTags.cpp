@@ -11,6 +11,8 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(State_Rolling, "State.Rolling")
 	UE_DEFINE_GAMEPLAY_TAG(State_Dead, "State.Dead")
 	UE_DEFINE_GAMEPLAY_TAG(State_Groggy, "State.Groggy")
+
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Invincible, "Effect.Invincible")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Move, "Input.Action.Move")
 	UE_DEFINE_GAMEPLAY_TAG(Input_Action_Look, "Input.Action.Look")
@@ -23,6 +25,7 @@ namespace DungeonRealmsGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Left, "Event.SwitchTarget.Left")
 	UE_DEFINE_GAMEPLAY_TAG(Event_SwitchTarget_Right, "Event.SwitchTarget.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Damaged, "Event.Damaged")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Blocked, "Event.Blocked")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
 
 	UE_DEFINE_GAMEPLAY_TAG(Combat_Attack_Knockback_Distance, "Combat.Attack.Knockback.Distance")

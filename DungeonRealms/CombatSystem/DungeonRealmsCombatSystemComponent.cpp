@@ -108,12 +108,17 @@ void UDungeonRealmsCombatSystemComponent::ProcessHitEvents(const TArray<FHitResu
 		if (const UDungeonRealmsCombatSystemComponent* TargetCombatSystem =
 			FindCombatSystemComponent(HitActor))
 		{
+			if (TargetCombatSystem->IsInInvincible())
+			{
+				continue;
+			}
+			
 			if (TargetCombatSystem->IsGuardStance())
 			{
 				HitEvent = TargetCombatSystem->ResolveHitEvent(GetOwner(), HitEvent);
 			}
 		}
-		
+
 		HitEvents.Add(HitEvent);
 
 		if (HitEvent.bParried)
@@ -232,6 +237,15 @@ bool UDungeonRealmsCombatSystemComponent::IsGuardStance() const
 	return IsValid(OwningAbilitySystem)
 		       ? OwningAbilitySystem->HasMatchingGameplayTag(DungeonRealmsGameplayTags::State_Guarding)
 		       : false;
+}
+
+bool UDungeonRealmsCombatSystemComponent::IsInInvincible() const
+{
+	UAbilitySystemComponent* OwningAbilitySystem =
+	UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	return IsValid(OwningAbilitySystem)
+			   ? OwningAbilitySystem->HasMatchingGameplayTag(DungeonRealmsGameplayTags::Effect_Invincible)
+			   : false;
 }
 
 FHitEventData UDungeonRealmsCombatSystemComponent::ResolveHitEvent(

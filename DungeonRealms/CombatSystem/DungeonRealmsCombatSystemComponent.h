@@ -120,6 +120,8 @@ public:
 	bool IsParryable() const;
 
 	bool IsGuardStance() const;
+	bool IsInInvincible() const;
+	
 	FHitEventData ResolveHitEvent(const AActor* Instigator, const FHitEventData& Payload) const;
 
 	UFUNCTION(BlueprintCallable)
