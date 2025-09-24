@@ -2,7 +2,7 @@
 
 ## 개요
 공격 애니메이션을 재생하는 중에 무기 궤적에 따라 충돌 검사를 수행합니다.
-- [결과 영상](https://drive.google.com/file/d/1K2FO4v9OAhV7bVxUhcMZzo9494uVe31n/view?usp=sharing)
+- [실행 영상](https://drive.google.com/file/d/1K2FO4v9OAhV7bVxUhcMZzo9494uVe31n/view?usp=sharing)
 
 ## 구현 내용
 ### Anim Notify State

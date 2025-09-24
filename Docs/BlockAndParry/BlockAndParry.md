@@ -2,7 +2,7 @@
 
 ## 개요
 상대방의 공격을 막거나(Block) 쳐내는(Parry) 행동을 구현합니다.
-- [결과 영상](https://drive.google.com/file/d/1d6lxRtUkdmIVporOcjgEp6_RYPO8wVxg/view?usp=sharing)
+- [실행 영상](https://drive.google.com/file/d/1d6lxRtUkdmIVporOcjgEp6_RYPO8wVxg/view?usp=sharing)
 
 ## 구현 내용
 ### 가드 어빌리티

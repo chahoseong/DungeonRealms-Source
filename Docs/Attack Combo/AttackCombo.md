@@ -2,7 +2,7 @@
 
 ## 개요
 플레이어의 입력에 따라 자연스러운 연속 공격을 구현합니다
-- [결과 영상](https://drive.google.com/file/d/1kt9mIrZkSf_mqzFXEYNOQKuekR6NZWXr/view?usp=sharing)
+- [실행 영상](https://drive.google.com/file/d/1kt9mIrZkSf_mqzFXEYNOQKuekR6NZWXr/view?usp=sharing)
 
 ## 구현 내용
 ### Combo Window
