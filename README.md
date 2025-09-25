@@ -7,7 +7,7 @@
 - [공격 트레이스](Docs/Attack%20Trace/AttackTrace.md)
 - [방어 및 패링](Docs/BlockAndParry/BlockAndParry.md)
 - [회피](Docs/Rolling/Rolling.md)
-- 시점 고정(Lock-on)
+- [시점 고정(Lock-on)](Docs/Lock-on/lock-on.md)
 - Stagger-Knockdown 시스템
 ## 장비 시스템
 - FastArraySerializer를 활용한 장비 동기화
